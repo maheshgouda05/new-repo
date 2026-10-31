@@ -1,0 +1,426 @@
+/* ==============================================================================
+   APPLE ID STYLE LOGIN & AUTHENTICATION LAYOUT
+   ============================================================================== */
+
+.apple-auth-wrapper {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #fbfbfd;
+}
+
+.apple-auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.02);
+  padding: 40px 36px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.apple-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #0071e3 0%, #42a5f5 100%);
+  color: white;
+  border-radius: 14px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.3);
+}
+
+.apple-auth-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #1d1d1f;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.apple-auth-subtitle {
+  color: #86868b;
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+  line-height: 1.45;
+}
+
+/* Apple Segmented Unified Input Group */
+.apple-input-container {
+  border: 1px solid #d2d2d7;
+  border-radius: 14px;
+  background: #ffffff;
+  overflow: hidden;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 20px;
+}
+
+.apple-input-container:focus-within {
+  border-color: #0071e3;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.16);
+}
+
+.apple-field-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.apple-field-row:first-child {
+  border-bottom: 1px solid #d2d2d7;
+}
+
+.apple-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: none !important;
+  background: transparent !important;
+  color: #1d1d1f;
+  font-size: 0.98rem;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.apple-input::placeholder {
+  color: #86868b;
+  font-size: 0.95rem;
+}
+
+.apple-field-icon {
+  position: absolute;
+  right: 14px;
+  font-size: 1rem;
+  color: #86868b;
+  pointer-events: none;
+}
+
+/* Apple Blue Primary Button */
+.apple-btn-submit {
+  width: 100%;
+  height: 48px;
+  background: #0071e3;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 113, 227, 0.25);
+}
+
+.apple-btn-submit:hover {
+  background: #0077ed;
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.35);
+  transform: translateY(-0.5px);
+}
+
+.apple-btn-submit:disabled {
+  background: #94c4f7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Apple Demo Account Switcher Cards */
+.apple-demo-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.apple-demo-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #86868b;
+  margin-bottom: 12px;
+}
+
+.apple-demo-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.apple-account-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.025);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.apple-account-card:hover {
+  background: rgba(0, 113, 227, 0.06);
+  border-color: rgba(0, 113, 227, 0.2);
+}
+
+.apple-account-info strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #1d1d1f;
+}
+
+.apple-account-info span {
+  font-size: 0.78rem;
+  color: #86868b;
+}
+
+.apple-account-role {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #0071e3;
+  border: 1px solid rgba(0, 113, 227, 0.2);
+}
+
+.apple-footer-link {
+  margin-top: 24px;
+  font-size: 0.9rem;
+  color: #86868b;
+}
+
+.apple-footer-link a {
+  color: #0071e3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.apple-footer-link a:hover {
+  text-decoration: underline;
+}
+
+.auth-wrapper {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.06), transparent 60%),
+              radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.06), transparent 60%);
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--light-border);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.auth-box-wide {
+  max-width: 620px;
+}
+
+.auth-header {
+  padding: 36px 36px 20px;
+  text-align: center;
+}
+
+.auth-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+.auth-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--dark-bg);
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.auth-body {
+  padding: 20px 36px 36px;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--dark-bg);
+  margin-bottom: 8px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  background-color: #ffffff;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-help {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Alerts */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.alert-success {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+/* Demo Credentials Helper Box */
+.demo-credentials-card {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+}
+
+.demo-credentials-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.demo-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-demo {
+  flex: 1;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.btn-demo span.role-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.btn-demo:hover {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+/* Switch Link */
+.auth-switch {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.auth-switch a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .auth-body {
+    padding: 20px;
+  }
+  .auth-header {
+    padding: 24px 20px 10px;
+  }
+}
+

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile | Analytix Club</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body style="background-color: var(--light-bg);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-badge">A</div>
+        <span>Analytix Club</span>
+      </a>
+
+      <div class="nav-actions">
+        <a id="back-to-dashboard-btn" href="member-dashboard.html" class="btn btn-secondary btn-sm">← Return to Dashboard</a>
+        <button onclick="Auth.logout()" class="btn btn-outline btn-sm">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 820px;">
+      
+      <!-- Profile Header Card -->
+      <div class="card-panel" style="padding: 28px; margin-bottom: 24px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <div class="user-avatar" id="profile-avatar-preview" style="width: 72px; height: 72px; font-size: 1.8rem; box-shadow: var(--shadow-md);">
+          U
+        </div>
+        <div style="flex-grow: 1;">
+          <h2 id="profile-header-name" style="font-size: 1.5rem; font-weight: 800; color: var(--dark-bg); margin-bottom: 4px;">User Name</h2>
+          <div id="profile-header-email" style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px;">user@analytixclub.edu</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="skill-pill" id="display-role-badge" style="background: #e0e7ff; color: var(--primary); font-weight: 700;">MEMBER</span>
+            <span class="skill-pill" id="display-team-badge">TEAM: NONE</span>
+            <span class="points-pill" id="display-points-badge">0 pts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Form Card -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Edit Profile Information</h3>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Roles & points are managed by club admins</span>
+        </div>
+        <div class="panel-body">
+          <form id="profile-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profile-name" class="form-label">Full Name *</label>
+                <input type="text" id="profile-name" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="profile-email" class="form-label">Email (Account ID - Read Only)</label>
+                <input type="email" id="profile-email" class="form-control" disabled style="background: #f1f5f9; cursor: not-allowed;">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profile-phone" class="form-label">Phone Number</label>
+                <input type="tel" id="profile-phone" class="form-control" placeholder="+91 98765 43210">
+              </div>
+              <div class="form-group">
+                <label for="profile-dept" class="form-label">Department / Branch</label>
+                <input type="text" id="profile-dept" class="form-control" placeholder="e.g. Computer Science & Eng.">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profile-year" class="form-label">Year of Study</label>
+                <select id="profile-year" class="form-control">
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                  <option value="Postgraduate">Postgraduate</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profile-photo" class="form-label">Profile Photo URL</label>
+                <input type="url" id="profile-photo" class="form-control" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="profile-skills" class="form-label">Skills & Competencies</label>
+              <input type="text" id="profile-skills" class="form-control" placeholder="e.g. Python, Machine Learning, UI/UX, Public Speaking">
+            </div>
+
+            <div class="form-group">
+              <label for="profile-bio" class="form-label">Short Bio</label>
+              <textarea id="profile-bio" class="form-control" rows="3" placeholder="Tell the club about yourself..."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+              <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
+

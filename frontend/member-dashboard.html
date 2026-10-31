@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Dashboard | Analytix Club</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="dashboard-layout">
+    <!-- Member Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <div class="brand-badge" style="width: 34px; height: 34px; font-size: 1rem;">A</div>
+        <span class="brand-text">Analytix Club</span>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li>
+          <a class="sidebar-link active" data-tab="overview">
+            <span>🏠</span> Dashboard
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="events">
+            <span>📅</span> Events
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="hackathons">
+            <span>🚀</span> Hackathons
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="announcements">
+            <span>📢</span> Announcements
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="registrations">
+            <span>📋</span> My Registrations
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="leaderboard">
+            <span>🏆</span> Leaderboard
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="profile">
+            <span>👤</span> My Profile
+          </a>
+        </li>
+        <li style="margin-top: auto;">
+          <a onclick="Auth.logout()" class="sidebar-link" style="color: #ef4444;">
+            <span>🚪</span> Logout
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar user-avatar-img">M</div>
+          <div class="user-info">
+            <div class="user-name user-display-name">Club Member</div>
+            <div class="user-role-badge user-display-role">MEMBER</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main">
+      <!-- Topbar -->
+      <header class="dashboard-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle" id="sidebar-toggle" aria-label="Toggle Menu">☰</button>
+          <h1 class="topbar-title" id="dashboard-title">Member Dashboard</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="skill-pill" style="background: #eef2ff; color: var(--primary); font-weight: 700;">
+            Team: <span class="user-display-team">Tech</span>
+          </span>
+          <a href="index.html" class="btn btn-secondary btn-sm" target="_blank">Club Home ↗</a>
+        </div>
+      </header>
+
+      <div class="dashboard-content">
+
+        <!-- 1. DASHBOARD OVERVIEW SECTION -->
+        <section class="content-section active" id="section-overview">
+          <!-- Welcome Banner -->
+          <div style="background: linear-gradient(135deg, var(--dark-bg) 0%, #312e81 100%); color: white; padding: 28px 32px; border-radius: var(--radius-lg); margin-bottom: 28px; box-shadow: var(--shadow-md);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div>
+                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">
+                  Welcome, <span id="member-welcome-name">Member</span>! 👋
+                </h2>
+                <p style="color: #cbd5e1; font-size: 0.95rem;">
+                  Track your registrations, participate in events, and earn activity points for the club leaderboard.
+                </p>
+              </div>
+              <div>
+                <a href="events.html" class="btn btn-primary" style="background-color: var(--secondary);">Explore Events</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Events Preview -->
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Upcoming Club Events</h3>
+              <a href="#" onclick="switchMemberTab('events')" class="btn btn-secondary btn-sm">View All →</a>
+            </div>
+            <div class="panel-body">
+              <div class="grid-3" id="member-upcoming-events">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Latest Announcements Preview -->
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Latest Announcements & Notices</h3>
+              <a href="#" onclick="switchMemberTab('announcements')" class="btn btn-secondary btn-sm">View All →</a>
+            </div>
+            <div class="panel-body">
+              <div id="member-latest-notices">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. EVENTS SECTION -->
+        <section class="content-section" id="section-events">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Upcoming Club Events</h3>
+              <span class="skill-pill">One-click Registration</span>
+            </div>
+            <div class="panel-body">
+              <div class="grid-3" id="member-events-grid">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. HACKATHONS SECTION -->
+        <section class="content-section" id="section-hackathons">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Hackathons & Competitions</h3>
+              <span class="skill-pill">Apply with Club Team</span>
+            </div>
+            <div class="panel-body">
+              <div class="grid-3" id="member-hackathons-grid">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. ANNOUNCEMENTS SECTION -->
+        <section class="content-section" id="section-announcements">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Club Announcements</h3>
+            </div>
+            <div class="panel-body" id="member-announcements-list">
+              <!-- Loaded dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. MY REGISTRATIONS SECTION -->
+        <section class="content-section" id="section-registrations">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">My Registered Events</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date & Time</th>
+                    <th>Applied At</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="my-events-table-body">
+                  <tr><td colspan="4" class="text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">My Hackathon Applications</h3>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Hackathon</th>
+                    <th>Team Name</th>
+                    <th>Applied At</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="my-hackathons-table-body">
+                  <tr><td colspan="4" class="text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. LEADERBOARD SECTION -->
+        <section class="content-section" id="section-leaderboard">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Official Analytix Club Leaderboard</h3>
+              <span class="skill-pill">Updated Live</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Member</th>
+                    <th>Team</th>
+                    <th>Total Points</th>
+                    <th>Completed Activities</th>
+                  </tr>
+                </thead>
+                <tbody id="member-leaderboard-body">
+                  <tr><td colspan="5" class="text-center">Loading leaderboard...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. MEMBER PROFILE SECTION -->
+        <section class="content-section" id="section-profile">
+          <div class="card-panel" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+              <h3 class="panel-title">My Profile</h3>
+              <div class="profile-badges-row">
+                <span class="skill-pill" id="member-badge-role" style="background: #e0e7ff; color: var(--primary); font-weight: 700;">MEMBER</span>
+                <span class="skill-pill" id="member-badge-team">TEAM: NONE</span>
+                <span class="points-pill" id="member-badge-points">0 pts</span>
+              </div>
+            </div>
+
+            <!-- Profile Header Strip with Avatar -->
+            <div class="profile-header-strip">
+              <div class="profile-avatar-circle" id="member-avatar-circle">M</div>
+              <div class="profile-details-strip">
+                <h3 class="profile-name-text" id="member-header-name">Member Name</h3>
+                <div class="profile-email-text" id="member-header-email">member@analytixclub.edu</div>
+                <div style="font-size: 0.8rem; color: #64748b;">
+                  Roles and points are managed exclusively by club admins.
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <form id="member-profile-form" onsubmit="handleMemberProfileSubmit(event)">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="member-profile-name">Full Name *</label>
+                    <input type="text" id="member-profile-name" class="form-control" placeholder="Your full name" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="member-profile-email">Email (Account ID - Read Only)</label>
+                    <input type="email" id="member-profile-email" class="form-control" disabled>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="member-profile-phone">Phone Number</label>
+                    <input type="tel" id="member-profile-phone" class="form-control" placeholder="+91 98765 43210">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="member-profile-dept">Department / Branch</label>
+                    <input type="text" id="member-profile-dept" class="form-control" placeholder="e.g. Information Technology">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="member-profile-year">Year of Study</label>
+                    <select id="member-profile-year" class="form-control">
+                      <option value="1st Year">1st Year</option>
+                      <option value="2nd Year">2nd Year</option>
+                      <option value="3rd Year">3rd Year</option>
+                      <option value="4th Year">4th Year</option>
+                      <option value="Postgraduate">Postgraduate</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="member-profile-photo">Profile Photo URL</label>
+                    <input type="url" id="member-profile-photo" class="form-control" placeholder="https://images.unsplash.com/...">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="member-profile-skills">Technical & Creative Skills</label>
+                  <input type="text" id="member-profile-skills" class="form-control" placeholder="e.g. Python, Figma, React, SQL">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="member-profile-bio">Short Bio</label>
+                  <textarea id="member-profile-bio" class="form-control" rows="3" placeholder="Tell the club about your passions..."></textarea>
+                </div>
+
+                <div style="margin-top: 10px;">
+                  <button type="submit" class="btn btn-primary" style="padding: 12px 28px;">
+                    Save Profile Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/member.js"></script>
+</body>
+</html>
+

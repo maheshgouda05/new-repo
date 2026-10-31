@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Announcements | Analytix Club</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-badge">A</div>
+        <span>Analytix Club</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="events.html" class="nav-link">Events</a></li>
+        <li><a href="hackathons.html" class="nav-link">Hackathons</a></li>
+        <li><a href="announcements.html" class="nav-link active">Announcements</a></li>
+      </ul>
+
+      <div class="nav-actions" id="nav-auth-actions">
+        <a href="login.html" class="apple-signin-pill">Sign In</a>
+        <a href="register.html" class="btn btn-secondary btn-sm" style="border-radius: 9999px;">Join Club</a>
+      </div>
+
+      <button class="nav-mobile-toggle" aria-label="Toggle Navigation">☰</button>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="section section-alt" style="padding: 48px 0 32px; border-bottom: 1px solid var(--light-border);">
+    <div class="container">
+      <span class="section-tag">Club Bulletins</span>
+      <h1 class="section-title">Official Announcements</h1>
+      <p class="section-desc">
+        Stay updated with official club news, meeting schedules, opportunities, and recruitment notices.
+      </p>
+    </div>
+  </section>
+
+  <!-- Announcements Stream -->
+  <main class="section">
+    <div class="container" style="max-width: 860px;" id="announcements-container">
+      <!-- Rendered dynamically -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border: none; padding-top: 0;">
+        <div>&copy; 2026 Analytix Club. All rights reserved.</div>
+        <div><a href="index.html" style="color: #cbd5e1;">Back to Home</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/events.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,107 @@
+/* ==============================================================================
+   ANALYTIX CLUB - ADMIN DASHBOARD SPECIFIC STYLESHEET
+   ============================================================================== */
+
+.admin-badge {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-table {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid #cbd5e1;
+  background: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-table:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.btn-table-danger {
+  color: #ef4444;
+  border-color: #fecaca;
+}
+
+.btn-table-danger:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+.btn-table-primary {
+  color: var(--primary);
+  border-color: #c7d2fe;
+}
+
+.btn-table-primary:hover {
+  background: #eef2ff;
+  border-color: var(--primary);
+}
+
+.file-preview-box {
+  width: 100%;
+  height: 140px;
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  cursor: pointer;
+  background: #f8fafc;
+  overflow: hidden;
+  position: relative;
+}
+
+.file-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.file-preview-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.team-select-pill {
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid #cbd5e1;
+  font-size: 0.82rem;
+  background-color: white;
+  font-weight: 600;
+}
+
+.points-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background-color: #fffbeb;
+  color: #b45309;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+

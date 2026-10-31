@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Analytix Club</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-badge">A</div>
+        <span>Analytix Club</span>
+      </a>
+      <div class="nav-actions">
+        <a href="index.html" class="btn btn-secondary btn-sm">← Back to Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="apple-auth-wrapper">
+    <div class="apple-auth-card">
+      <div class="apple-logo-badge">A</div>
+      <h1 class="apple-auth-title">Sign in with Analytix ID</h1>
+      <p class="apple-auth-subtitle">Use your club account credentials to access your dashboard</p>
+
+      <!-- Error Alert -->
+      <div id="login-alert" class="alert alert-error" style="display: none; margin-bottom: 20px;"></div>
+
+      <form id="login-form">
+        <!-- Apple Segmented Input Container -->
+        <div class="apple-input-container">
+          <div class="apple-field-row">
+            <input type="email" id="email" class="apple-input" placeholder="Email or Analytix ID" required autocomplete="email">
+            <span class="apple-field-icon">✉️</span>
+          </div>
+          <div class="apple-field-row">
+            <input type="password" id="password" class="apple-input" placeholder="Password" required autocomplete="current-password">
+            <span class="apple-field-icon">🔒</span>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-login" class="apple-btn-submit">
+          <span>Sign In</span>
+          <span style="font-size: 1.1rem; line-height: 1;">→</span>
+        </button>
+      </form>
+
+      <!-- Apple-style Fast Account Switcher -->
+      <div class="apple-demo-section">
+        <div class="apple-demo-label">Quick Account Sign-in (1-Click)</div>
+        <div class="apple-demo-cards">
+          <div class="apple-account-card" onclick="fillCredentials('admin@analytixclub.edu', 'Admin@123')">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="apple-account-avatar" style="width: 32px; height: 32px; font-size: 0.85rem;">A</div>
+              <div class="apple-account-info">
+                <strong>Arjun Sharma</strong>
+                <span>admin@analytixclub.edu</span>
+              </div>
+            </div>
+            <span class="apple-account-role">Admin</span>
+          </div>
+
+          <div class="apple-account-card" onclick="fillCredentials('member@analytixclub.edu', 'Member@123')">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="apple-account-avatar" style="width: 32px; height: 32px; font-size: 0.85rem; background: #10b981;">P</div>
+              <div class="apple-account-info">
+                <strong>Priya Nair</strong>
+                <span>member@analytixclub.edu</span>
+              </div>
+            </div>
+            <span class="apple-account-role" style="color: #10b981; border-color: rgba(16, 185, 129, 0.3);">Member</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="apple-footer-link">
+        Don’t have an Analytix ID? <a href="register.html">Create yours now</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // If already logged in, redirect straight to their dashboard
+      Auth.redirectIfLoggedIn();
+
+      const form = document.getElementById('login-form');
+      const alertBox = document.getElementById('login-alert');
+      const submitBtn = document.getElementById('btn-login');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Verifying credentials...';
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        try {
+          await Auth.login(email, password);
+        } catch (err) {
+          alertBox.textContent = err.message || 'Login failed. Please check credentials.';
+          alertBox.style.display = 'flex';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In to Club';
+        }
+      });
+    });
+
+    function fillCredentials(email, password) {
+      document.getElementById('email').value = email;
+      document.getElementById('password').value = password;
+      const alertBox = document.getElementById('login-alert');
+      if (alertBox) alertBox.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
+

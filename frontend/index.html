@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytix Club | Empowering Data, Tech & Design</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-badge">A</div>
+        <span>Analytix Club</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#teams" class="nav-link">Our Teams</a></li>
+        <li><a href="events.html" class="nav-link">Events</a></li>
+        <li><a href="hackathons.html" class="nav-link">Hackathons</a></li>
+        <li><a href="announcements.html" class="nav-link">Announcements</a></li>
+      </ul>
+
+      <div class="nav-actions" id="nav-auth-actions">
+        <a href="login.html" class="apple-signin-pill">Sign In</a>
+        <a href="register.html" class="btn btn-secondary btn-sm" style="border-radius: 9999px;">Join Club</a>
+      </div>
+
+      <button class="nav-mobile-toggle" aria-label="Toggle Navigation">☰</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-badge">⚡ Official College Club 2026-27</div>
+        <h1 class="hero-title">
+          Where Data Turns Into <span class="text-gradient">Impact & Innovation</span>
+        </h1>
+        <p class="hero-subtitle">
+          Analytix Club brings together passionate programmers, creative designers, and dynamic organizers. We build intelligent software, compete in national hackathons, and host hands-on tech bootcamps.
+        </p>
+        <div class="hero-buttons">
+          <a href="events.html" class="btn btn-primary btn-lg">Explore Events</a>
+          <a href="register.html" class="btn btn-secondary btn-lg">Become a Member</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+          <div style="font-weight: 700; color: var(--dark-bg); font-size: 1.1rem;">⚡ Club Pulse</div>
+          <span class="status-pill status-approved">Active Term</span>
+        </div>
+
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
+          Join a community of 250+ aspiring engineers, analysts, and designers pushing boundaries across AI, Web Development, and Visual Media.
+        </p>
+
+        <div class="stat-strip">
+          <div class="stat-item">
+            <h3>250+</h3>
+            <p>Active Members</p>
+          </div>
+          <div class="stat-item">
+            <h3>18+</h3>
+            <p>Annual Events</p>
+          </div>
+          <div class="stat-item">
+            <h3>₹1.5L</h3>
+            <p>Hackathon Pool</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section section-alt" id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">About Analytix</span>
+        <h2 class="section-title">Built by Students, for Future Leaders</h2>
+        <p class="section-desc">
+          We bridge the gap between classroom theory and industry-grade engineering through real projects, mentor guidance, and team collaboration.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="team-card">
+          <div class="team-icon" style="background: #eef2ff; color: #4f46e5;">💻</div>
+          <h3 class="team-name">Practical Workshops</h3>
+          <p class="team-desc">Regular hands-on sessions on Machine Learning, Full-Stack FastAPI/PostgreSQL architectures, and cloud deployments.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-icon" style="background: #fdf2f8; color: #ec4899;">🚀</div>
+          <h3 class="team-name">Hackathon Culture</h3>
+          <p class="team-desc">Dedicated sprint squads, team formation support, and mentorship for national & global hackathon competitions.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-icon" style="background: #f0fdf4; color: #16a34a;">🏆</div>
+          <h3 class="team-name">Merit Leaderboard</h3>
+          <p class="team-desc">Transparent recognition system where active contributions earn club points, certificates, and priority project roles.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Teams Section -->
+  <section class="section" id="teams">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">The Three Pillars</span>
+        <h2 class="section-title">Our Club Teams</h2>
+        <p class="section-desc">
+          Every member is assigned to a specialized vertical tailored to their unique passion and strengths.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Tech Team -->
+        <div class="team-card team-tech">
+          <div class="team-icon">💻</div>
+          <h3 class="team-name">Tech Team</h3>
+          <p class="team-desc">
+            Develops the club's open-source websites, builds machine learning prototypes, handles cloud servers, and conducts coding workshops.
+          </p>
+          <div class="team-skills-list">
+            <span class="skill-pill">Python</span>
+            <span class="skill-pill">FastAPI</span>
+            <span class="skill-pill">Data Science</span>
+            <span class="skill-pill">PostgreSQL</span>
+            <span class="skill-pill">AI/ML</span>
+          </div>
+        </div>
+
+        <!-- Design Team -->
+        <div class="team-card team-design">
+          <div class="team-icon">🎨</div>
+          <h3 class="team-name">Design Team</h3>
+          <p class="team-desc">
+            Designs stunning event posters, digital assets, social media branding, and user-centric wireframes and prototypes in Figma.
+          </p>
+          <div class="team-skills-list">
+            <span class="skill-pill">Figma</span>
+            <span class="skill-pill">UI/UX Design</span>
+            <span class="skill-pill">Poster Design</span>
+            <span class="skill-pill">Branding</span>
+            <span class="skill-pill">Motion</span>
+          </div>
+        </div>
+
+        <!-- MOC Team -->
+        <div class="team-card team-moc">
+          <div class="team-icon">📢</div>
+          <h3 class="team-name">MOC Team</h3>
+          <p class="team-desc">
+            Media, Organization, and Content. Masters event logistics, stage anchoring, sponsor outreach, content copywriting, and club public relations.
+          </p>
+          <div class="team-skills-list">
+            <span class="skill-pill">Event Hosting</span>
+            <span class="skill-pill">Public Relations</span>
+            <span class="skill-pill">Content Writing</span>
+            <span class="skill-pill">Logistics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Events Section -->
+  <section class="section section-alt" id="events">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Happening Soon</span>
+        <h2 class="section-title">Upcoming Club Events</h2>
+        <p class="section-desc">Join our bootcamps, speaker sessions, and project showcase days.</p>
+      </div>
+
+      <div class="grid-3" id="home-events-grid">
+        <!-- Loaded dynamically from API -->
+      </div>
+
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="events.html" class="btn btn-secondary">View All Club Events →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Announcements Section -->
+  <section class="section" id="announcements">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Updates & News</span>
+        <h2 class="section-title">Latest Announcements</h2>
+        <p class="section-desc">Important circulars, opportunities, and recruitment announcements.</p>
+      </div>
+
+      <div style="max-width: 800px; margin: 0 auto;" id="home-announcements-list">
+        <!-- Loaded dynamically from API -->
+      </div>
+
+      <div style="text-align: center; margin-top: 32px;">
+        <a href="announcements.html" class="btn btn-outline">Read All Announcements →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <div class="brand-badge" style="width: 32px; height: 32px; font-size: 1rem;">A</div>
+            <span>Analytix Club</span>
+          </div>
+          <p class="footer-desc">
+            The premier technical and analytics student organization. Fostering innovation, engineering excellence, and community spirit.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#teams">Teams</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="hackathons.html">Hackathons</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Club Portals</h4>
+          <ul class="footer-links">
+            <li><a href="login.html">Member Login</a></li>
+            <li><a href="register.html">Join Club</a></li>
+            <li><a href="admin-dashboard.html">Admin Portal</a></li>
+            <li><a href="announcements.html">Notices</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Contact Club</h4>
+          <p class="footer-desc" style="margin-bottom: 8px;">Analytix Club Room, Tech Complex</p>
+          <p class="footer-desc" style="margin-bottom: 8px;">College of Engineering & Technology</p>
+          <p class="footer-desc">Email: contact@analytixclub.edu</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Analytix Club. All rights reserved.</div>
+        <div>Built with HTML5, CSS3, Vanilla JS & FastAPI</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/events.js"></script>
+</body>
+</html>
+

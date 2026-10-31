@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join Club | Analytix Club</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-badge">A</div>
+        <span>Analytix Club</span>
+      </a>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-secondary btn-sm">Already a Member? Login</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-wrapper">
+    <div class="auth-box auth-box-wide">
+      <div class="auth-header">
+        <div class="auth-logo">🚀</div>
+        <h2 class="auth-title">Join Analytix Club</h2>
+        <p class="auth-subtitle">Create your member profile to join events, hackathons & projects</p>
+      </div>
+
+      <div class="auth-body">
+        <div id="register-alert" class="alert alert-error" style="display: none;"></div>
+
+        <form id="register-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="full_name" class="form-label">Full Name *</label>
+              <input type="text" id="full_name" class="form-control" placeholder="e.g. Sneha Patel" required>
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">College / Personal Email *</label>
+              <input type="email" id="email" class="form-control" placeholder="name@college.edu" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password" class="form-label">Password *</label>
+              <input type="password" id="password" class="form-control" placeholder="Min. 6 characters" minlength="6" required>
+            </div>
+            <div class="form-group">
+              <label for="confirm_password" class="form-label">Confirm Password *</label>
+              <input type="password" id="confirm_password" class="form-control" placeholder="Re-enter password" minlength="6" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="department" class="form-label">Department / Branch</label>
+              <input type="text" id="department" class="form-control" placeholder="e.g. Computer Science, AI, ECE">
+            </div>
+            <div class="form-group">
+              <label for="year" class="form-label">Year of Study</label>
+              <select id="year" class="form-control">
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year" selected>2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="Postgraduate">Postgraduate</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="tel" id="phone" class="form-control" placeholder="+91 98765 43210">
+            </div>
+            <div class="form-group">
+              <label for="skills" class="form-label">Key Skills / Interests</label>
+              <input type="text" id="skills" class="form-control" placeholder="e.g. Python, Figma, Video Editing, SQL">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="bio" class="form-label">Short Bio / What excites you about Analytix?</label>
+            <textarea id="bio" class="form-control" rows="2" placeholder="Tell us about yourself and what you'd love to learn or contribute..."></textarea>
+          </div>
+
+          <button type="submit" id="btn-register" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 8px;">
+            Create Club Member Account
+          </button>
+        </form>
+
+        <div class="auth-switch">
+          Already registered? <a href="login.html">Sign in here</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      Auth.redirectIfLoggedIn();
+
+      const form = document.getElementById('register-form');
+      const alertBox = document.getElementById('register-alert');
+      const submitBtn = document.getElementById('btn-register');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+
+        const pwd = document.getElementById('password').value;
+        const confirmPwd = document.getElementById('confirm_password').value;
+
+        if (pwd !== confirmPwd) {
+          alertBox.textContent = 'Passwords do not match. Please verify.';
+          alertBox.style.display = 'flex';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+
+        const payload = {
+          full_name: document.getElementById('full_name').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          password: pwd,
+          phone: document.getElementById('phone').value.trim(),
+          department: document.getElementById('department').value.trim(),
+          year: document.getElementById('year').value,
+          skills: document.getElementById('skills').value.trim(),
+          bio: document.getElementById('bio').value.trim()
+        };
+
+        try {
+          await Auth.register(payload);
+        } catch (err) {
+          alertBox.textContent = err.message || 'Registration failed. Please try again.';
+          alertBox.style.display = 'flex';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Club Member Account';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

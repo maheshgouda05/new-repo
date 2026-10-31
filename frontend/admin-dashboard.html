@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Analytix Club</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="dashboard-layout">
+    <!-- Admin Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <div class="brand-badge" style="width: 34px; height: 34px; font-size: 1rem;">A</div>
+        <span class="brand-text">Analytix Admin</span>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li>
+          <a class="sidebar-link active" data-tab="overview">
+            <span>📊</span> Overview
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="events">
+            <span>📅</span> Manage Events
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="hackathons">
+            <span>🚀</span> Manage Hackathons
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="announcements">
+            <span>📢</span> Announcements
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="members">
+            <span>👥</span> Manage Members
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="registrations">
+            <span>📋</span> Registrations
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="leaderboard">
+            <span>🏆</span> Leaderboard
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" data-tab="profile">
+            <span>⚙️</span> Profile
+          </a>
+        </li>
+        <li style="margin-top: auto;">
+          <a onclick="Auth.logout()" class="sidebar-link" style="color: #ef4444;">
+            <span>🚪</span> Logout
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar user-avatar-img">A</div>
+          <div class="user-info">
+            <div class="user-name user-display-name">Admin Lead</div>
+            <div class="user-role-badge">ADMINISTRATOR</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Dashboard Area -->
+    <main class="dashboard-main">
+      <!-- Topbar -->
+      <header class="dashboard-topbar">
+        <div class="topbar-left">
+          <button class="topbar-toggle" id="sidebar-toggle" aria-label="Toggle Menu">☰</button>
+          <h1 class="topbar-title" id="dashboard-title">Admin Overview</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="admin-badge">Admin Mode</span>
+          <a href="index.html" class="btn btn-secondary btn-sm" target="_blank">View Site ↗</a>
+        </div>
+      </header>
+
+      <!-- Content Container -->
+      <div class="dashboard-content">
+
+        <!-- 1. OVERVIEW SECTION -->
+        <section class="content-section active" id="section-overview">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon stat-icon-purple">👥</div>
+              <div class="stat-details">
+                <h4>Registered Members</h4>
+                <div class="stat-number" id="stat-members">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon stat-icon-blue">📅</div>
+              <div class="stat-details">
+                <h4>Total Events</h4>
+                <div class="stat-number" id="stat-events">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon stat-icon-amber">🚀</div>
+              <div class="stat-details">
+                <h4>Upcoming Hackathons</h4>
+                <div class="stat-number" id="stat-hackathons">0</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon stat-icon-emerald">📋</div>
+              <div class="stat-details">
+                <h4>Event Registrations</h4>
+                <div class="stat-number" id="stat-registrations">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            <!-- Recent Activities -->
+            <div class="card-panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Recent Club Activities</h3>
+                <span class="skill-pill">Live Feed</span>
+              </div>
+              <div class="panel-body">
+                <ul class="activity-list" id="recent-activity-list">
+                  <li class="activity-item">Loading activities...</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Quick Action Cards -->
+            <div class="card-panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Quick Actions</h3>
+              </div>
+              <div class="panel-body" style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="openAddEventModal()" class="btn btn-primary" style="width: 100%;">
+                  + Add New Event
+                </button>
+                <button onclick="openAddHackathonModal()" class="btn btn-secondary" style="width: 100%;">
+                  + Add Hackathon
+                </button>
+                <button onclick="openAddAnnouncementModal()" class="btn btn-outline" style="width: 100%;">
+                  + Post Announcement
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. MANAGE EVENTS SECTION -->
+        <section class="content-section" id="section-events">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Club Events Management</h3>
+              <button onclick="openAddEventModal()" class="btn btn-primary btn-sm">+ Add New Event</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Event Details</th>
+                    <th>Date & Time</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Registrations</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="events-table-body">
+                  <tr><td colspan="6" class="text-center">Loading events...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. MANAGE HACKATHONS SECTION -->
+        <section class="content-section" id="section-hackathons">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Hackathon Directory Management</h3>
+              <button onclick="openAddHackathonModal()" class="btn btn-primary btn-sm">+ Add Hackathon</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Hackathon</th>
+                    <th>Mode</th>
+                    <th>Starts</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="hackathons-table-body">
+                  <tr><td colspan="6" class="text-center">Loading hackathons...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. MANAGE ANNOUNCEMENTS SECTION -->
+        <section class="content-section" id="section-announcements">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Official Announcements</h3>
+              <button onclick="openAddAnnouncementModal()" class="btn btn-primary btn-sm">+ Post Announcement</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Announcement</th>
+                    <th>Category</th>
+                    <th>Date Posted</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="announcements-table-body">
+                  <tr><td colspan="5" class="text-center">Loading announcements...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. MANAGE MEMBERS SECTION -->
+        <section class="content-section" id="section-members">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Club Members Directory</h3>
+              <div class="filter-bar">
+                <input type="text" id="member-search" class="search-input" placeholder="Search by name or email..." oninput="loadMembers()">
+                <select id="member-team-filter" class="select-filter" onchange="loadMembers()">
+                  <option value="All">All Teams</option>
+                  <option value="Tech">Tech</option>
+                  <option value="Design">Design</option>
+                  <option value="MOC">MOC</option>
+                  <option value="None">None</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Team</th>
+                    <th>Points</th>
+                    <th>System Role</th>
+                    <th>Dept & Year</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="members-table-body">
+                  <tr><td colspan="6" class="text-center">Loading members...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. REGISTRATIONS SECTION -->
+        <section class="content-section" id="section-registrations">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">All Event Registrations</h3>
+              <button onclick="loadRegistrations()" class="btn btn-secondary btn-sm">🔄 Refresh</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Applicant Member</th>
+                    <th>Registration Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="all-registrations-table-body">
+                  <tr><td colspan="5" class="text-center">Loading registrations...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. LEADERBOARD SECTION -->
+        <section class="content-section" id="section-leaderboard">
+          <div class="card-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">Club Leaderboard & Points Management</h3>
+              <span class="skill-pill">Admins Award Points</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Member</th>
+                    <th>Team</th>
+                    <th>Total Points</th>
+                    <th>Activities</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-table-body">
+                  <tr><td colspan="6" class="text-center">Loading leaderboard...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. ADMIN PROFILE SECTION -->
+        <section class="content-section" id="section-profile">
+          <div class="card-panel" style="max-width: 800px; margin: 0 auto;">
+            <div class="panel-header">
+              <h3 class="panel-title">Admin Account Profile</h3>
+              <div class="profile-badges-row">
+                <span class="admin-badge">ADMINISTRATOR</span>
+                <span class="skill-pill" id="admin-badge-team">TEAM: TECH</span>
+              </div>
+            </div>
+
+            <!-- Profile Header Strip with Avatar -->
+            <div class="profile-header-strip">
+              <div class="profile-avatar-circle" id="admin-avatar-circle">A</div>
+              <div class="profile-details-strip">
+                <h3 class="profile-name-text" id="admin-header-name">Admin Lead</h3>
+                <div class="profile-email-text" id="admin-header-email">admin@analytixclub.edu</div>
+                <div style="font-size: 0.8rem; color: #64748b;">
+                  Full Administrator privileges active.
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <form id="admin-profile-form" onsubmit="handleAdminProfileSubmit(event)">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="admin-profile-name">Full Name *</label>
+                    <input type="text" id="admin-profile-name" class="form-control" placeholder="Admin full name" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="admin-profile-email">Email (Account ID - Read Only)</label>
+                    <input type="email" id="admin-profile-email" class="form-control" disabled>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="admin-profile-phone">Phone Number</label>
+                    <input type="tel" id="admin-profile-phone" class="form-control" placeholder="+91 98765 43210">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="admin-profile-dept">Department / Branch</label>
+                    <input type="text" id="admin-profile-dept" class="form-control" placeholder="e.g. Computer Science & Eng.">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="admin-profile-year">Year of Study</label>
+                    <input type="text" id="admin-profile-year" class="form-control" placeholder="e.g. 4th Year">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="admin-profile-photo">Avatar / Profile Photo URL</label>
+                    <input type="url" id="admin-profile-photo" class="form-control" placeholder="https://images.unsplash.com/...">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="admin-profile-skills">Technical & Leadership Skills</label>
+                  <input type="text" id="admin-profile-skills" class="form-control" placeholder="e.g. Python, FastAPI, Cloud, Leadership">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="admin-profile-bio">Bio</label>
+                  <textarea id="admin-profile-bio" class="form-control" rows="3" placeholder="Club lead coordinator bio..."></textarea>
+                </div>
+
+                <div style="margin-top: 10px;">
+                  <button type="submit" class="btn btn-primary" style="padding: 12px 28px;">
+                    Save Profile Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT EVENT -->
+  <div class="modal-overlay" id="event-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="event-modal-title">Add New Club Event</h3>
+        <button class="modal-close" onclick="closeModal('event-modal')">&times;</button>
+      </div>
+      <form id="event-form" onsubmit="handleEventFormSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="event-id">
+          <input type="hidden" id="event-poster-url">
+
+          <div class="form-group">
+            <label class="form-label">Event Name *</label>
+            <input type="text" id="event-title" class="form-control" placeholder="e.g. PyData Workshop 2026" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description *</label>
+            <textarea id="event-description" class="form-control" rows="3" placeholder="Detailed outline of the event..." required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Date & Time *</label>
+              <input type="datetime-local" id="event-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registration Deadline *</label>
+              <input type="datetime-local" id="event-deadline" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Venue *</label>
+              <input type="text" id="event-venue" class="form-control" placeholder="e.g. Auditorium Hall B" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Publish Status</label>
+              <select id="event-status" class="form-control">
+                <option value="published">Published</option>
+                <option value="draft">Save as Draft</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Event Instructions</label>
+            <textarea id="event-instructions" class="form-control" rows="2" placeholder="e.g. Bring your laptop, install Python..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Upload Event Poster (Stored in Supabase Storage)</label>
+            <input type="file" id="event-poster-file" class="form-control" accept="image/*">
+            <img id="event-poster-preview" style="max-height: 120px; border-radius: 6px; margin-top: 8px; display: none;" alt="Preview">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('event-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT HACKATHON -->
+  <div class="modal-overlay" id="hackathon-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="hackathon-modal-title">Add Hackathon</h3>
+        <button class="modal-close" onclick="closeModal('hackathon-modal')">&times;</button>
+      </div>
+      <form id="hackathon-form" onsubmit="handleHackathonFormSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="hackathon-id">
+          <input type="hidden" id="hackathon-poster-url">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Hackathon Name *</label>
+              <input type="text" id="hackathon-title" class="form-control" placeholder="e.g. Smart City Hack 2026" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Organizer / Company *</label>
+              <input type="text" id="hackathon-organizer" class="form-control" placeholder="e.g. Google / Analytix" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description *</label>
+            <textarea id="hackathon-description" class="form-control" rows="2" required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Start Date *</label>
+              <input type="date" id="hackathon-start-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registration Deadline *</label>
+              <input type="date" id="hackathon-deadline" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Mode</label>
+              <select id="hackathon-mode" class="form-control">
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+                <option value="hybrid">Hybrid</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Location / City *</label>
+              <input type="text" id="hackathon-location" class="form-control" placeholder="e.g. Main Auditorium / Virtual" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Official Registration Link</label>
+              <input type="url" id="hackathon-link" class="form-control" placeholder="https://hackathon.org/register">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select id="hackathon-status" class="form-control">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Eligibility</label>
+              <input type="text" id="hackathon-eligibility" class="form-control" value="All college students">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Required Skills</label>
+              <input type="text" id="hackathon-skills" class="form-control" placeholder="e.g. Python, AI, React">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Poster Image (Upload)</label>
+            <input type="file" id="hackathon-poster-file" class="form-control" accept="image/*">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('hackathon-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Hackathon</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT ANNOUNCEMENT -->
+  <div class="modal-overlay" id="announcement-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="announcement-modal-title">Create Announcement</h3>
+        <button class="modal-close" onclick="closeModal('announcement-modal')">&times;</button>
+      </div>
+      <form id="announcement-form" onsubmit="handleAnnouncementFormSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="announcement-id">
+
+          <div class="form-group">
+            <label class="form-label">Title *</label>
+            <input type="text" id="announcement-title" class="form-control" placeholder="e.g. Orientation Session Date" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description / Notice Details *</label>
+            <textarea id="announcement-description" class="form-control" rows="3" required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="announcement-category" class="form-control">
+                <option value="General">General</option>
+                <option value="Notice">Notice</option>
+                <option value="Urgent">Urgent</option>
+                <option value="Opportunity">Opportunity</option>
+                <option value="Event">Event</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select id="announcement-status" class="form-control">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Announcement Image / Poster (Optional)</label>
+            <input type="file" id="announcement-image-file" class="form-control" accept="image/*">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('announcement-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Publish Announcement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: AWARD POINTS -->
+  <div class="modal-overlay" id="award-modal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">⭐ Award Club Points</h3>
+        <button class="modal-close" onclick="closeModal('award-modal')">&times;</button>
+      </div>
+      <form id="award-form" onsubmit="handleAwardPointsSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="award-member-id">
+          <p style="margin-bottom: 16px; font-size: 0.95rem;">
+            Awarding points to: <strong id="award-member-name" style="color: var(--primary);"></strong>
+          </p>
+
+          <div class="form-group">
+            <label class="form-label">Points to Award</label>
+            <input type="number" id="award-points-input" class="form-control" min="5" max="500" value="25" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Activity Description</label>
+            <textarea id="award-desc-input" class="form-control" rows="2" placeholder="e.g. Conducted Python workshop / Built club poster" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('award-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Award Points</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: VIEW EVENT REGISTRATIONS -->
+  <div class="modal-overlay" id="event-registrations-modal">
+    <div class="modal-card" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="event-registrations-title">Event Registrations</h3>
+        <button class="modal-close" onclick="closeModal('event-registrations-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Member</th>
+                <th>Email</th>
+                <th>Registered At</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="event-registrations-list">
+              <tr><td colspan="5" class="text-center">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('event-registrations-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
+
