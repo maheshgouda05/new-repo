@@ -49,13 +49,19 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
               <label for="password" class="form-label">Password *</label>
-              <input type="password" id="password" class="form-control" placeholder="Min. 6 characters" minlength="6" required>
+              <div style="position: relative;">
+                <input type="password" id="password" class="form-control" placeholder="Min. 6 characters" minlength="6" required>
+                <button type="button" class="apple-pwd-toggle" style="top: 8px; right: 8px;" onclick="togglePwdVisibility('password', this)">👁️</button>
+              </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
               <label for="confirm_password" class="form-label">Confirm Password *</label>
-              <input type="password" id="confirm_password" class="form-control" placeholder="Re-enter password" minlength="6" required>
+              <div style="position: relative;">
+                <input type="password" id="confirm_password" class="form-control" placeholder="Re-enter password" minlength="6" required>
+                <button type="button" class="apple-pwd-toggle" style="top: 8px; right: 8px;" onclick="togglePwdVisibility('confirm_password', this)">👁️</button>
+              </div>
             </div>
           </div>
 
@@ -107,12 +113,25 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script>
+    function togglePwdVisibility(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       Auth.redirectIfLoggedIn();
 
       const form = document.getElementById('register-form');
       const alertBox = document.getElementById('register-alert');
       const submitBtn = document.getElementById('btn-register');
+      const authBody = document.querySelector('.auth-body');
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -130,9 +149,10 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Creating account...';
 
+        const email = document.getElementById('email').value.trim();
         const payload = {
           full_name: document.getElementById('full_name').value.trim(),
-          email: document.getElementById('email').value.trim(),
+          email: email,
           password: pwd,
           phone: document.getElementById('phone').value.trim(),
           department: document.getElementById('department').value.trim(),
@@ -142,7 +162,24 @@
         };
 
         try {
-          await Auth.register(payload);
+          const res = await Auth.register(payload);
+          if (res && (res.requires_verification || !res.access_token)) {
+            authBody.innerHTML = `
+              <div class="apple-notice-card" style="padding: 32px 20px;">
+                <div class="apple-notice-icon">✉️</div>
+                <h3 class="apple-notice-title">Verify Your Email Address</h3>
+                <p class="apple-notice-text">
+                  We've sent an email verification link to <strong>${API.escapeHtml(email)}</strong>.<br><br>
+                  Please check your inbox (and spam folder), click the verification link, and then sign in.
+                </p>
+                <div style="margin-top: 24px;">
+                  <a href="login.html" class="btn btn-primary" style="display: inline-block; padding: 12px 28px; text-decoration: none;">
+                    Go to Login →
+                  </a>
+                </div>
+              </div>
+            `;
+          }
         } catch (err) {
           alertBox.textContent = err.message || 'Registration failed. Please try again.';
           alertBox.style.display = 'flex';

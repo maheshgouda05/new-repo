@@ -63,11 +63,12 @@ def test_invalid_login():
 
 def test_new_member_registration():
     unique_email = f"student_{uuid.uuid4().hex[:8]}@analytixclub.edu"
+    unique_phone = f"+9198765{uuid.uuid4().hex[:5]}"
     response = client.post("/api/auth/register", json={
         "email": unique_email,
         "password": "SecurePassword@123",
         "full_name": "Test Student",
-        "phone": "+91 91234 56789",
+        "phone": unique_phone,
         "department": "Computer Science",
         "year": "1st Year",
         "skills": "Python, Data Analysis",
@@ -79,6 +80,58 @@ def test_new_member_registration():
     # Security: Verify that new registrations are strictly assigned 'member' role
     assert data["user"]["role"] == "member"
     assert data["user"]["email"] == unique_email
+
+    # Duplicate email prevention
+    dup_res = client.post("/api/auth/register", json={
+        "email": unique_email,
+        "password": "AnotherPassword@123",
+        "full_name": "Duplicate Student",
+        "phone": "+919999900000"
+    })
+    assert dup_res.status_code == 400
+    assert "already exists" in dup_res.json()["detail"].lower()
+
+    # Duplicate phone prevention
+    dup_phone_res = client.post("/api/auth/register", json={
+        "email": f"diff_{uuid.uuid4().hex[:8]}@analytixclub.edu",
+        "password": "AnotherPassword@123",
+        "full_name": "Duplicate Phone Student",
+        "phone": unique_phone
+    })
+    assert dup_phone_res.status_code == 400
+    assert "phone number is already registered" in dup_phone_res.json()["detail"].lower()
+
+def test_forgot_password_endpoint():
+    # Calling forgot password always returns success message without leaking existence
+    res = client.post("/api/auth/forgot-password", json={
+        "email": "registered_or_not@analytixclub.edu"
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert "Password reset link has been sent" in data["message"]
+
+def test_phone_login_endpoints():
+    # 1. Unregistered phone number should be rejected with 404
+    unregistered_res = client.post("/api/auth/phone/send-otp", json={
+        "phone": "+91 99999 00000"
+    })
+    assert unregistered_res.status_code == 404
+    assert "No club member account is registered" in unregistered_res.json()["detail"]
+
+    # 2. Registered phone number (member's phone: +91 98765 12345)
+    registered_res = client.post("/api/auth/phone/send-otp", json={
+        "phone": "+91 98765 12345"
+    })
+    # Since SMS provider in test environment might be disabled in Supabase,
+    # the API responds either 200 (OTP sent) or 400 (phone provider disabled warning)
+    assert registered_res.status_code in [200, 400]
+
+    # 3. Verify OTP with invalid code on registered phone returns 400
+    verify_res = client.post("/api/auth/phone/verify-otp", json={
+        "phone": "+91 98765 12345",
+        "otp": "000000"
+    })
+    assert verify_res.status_code == 400
 
 # --- 3. ROLE-BASED AUTHORIZATION & RESTRICTIONS ---
 def test_member_forbidden_from_admin_endpoints():

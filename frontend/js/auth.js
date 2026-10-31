@@ -37,6 +37,12 @@ const Auth = {
   async register(userData) {
     try {
       const response = await API.post('/api/auth/register', userData);
+      
+      // If email verification is required by Supabase, caller handles display
+      if (response.requires_verification || !response.access_token) {
+        return response;
+      }
+
       API.setToken(response.access_token);
       API.setUser(response.user);
 
@@ -48,6 +54,70 @@ const Auth = {
       }, 600);
 
       return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Phone Login: Sends OTP to registered mobile number
+   */
+  async sendPhoneOtp(phone) {
+    try {
+      return await API.post('/api/auth/phone/send-otp', { phone });
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Phone Login: Verifies SMS OTP, stores session and redirects by role
+   */
+  async loginWithPhone(phone, otp) {
+    try {
+      const response = await API.post('/api/auth/phone/verify-otp', { phone, otp });
+      API.setToken(response.access_token);
+      API.setUser(response.user);
+
+      API.toast(`Welcome back, ${response.user.full_name}!`, 'success');
+
+      setTimeout(() => {
+        if (response.user.role === 'admin') {
+          window.location.href = 'admin-dashboard.html';
+        } else {
+          window.location.href = 'member-dashboard.html';
+        }
+      }, 500);
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Forgot Password: Sends password reset link to user's email
+   */
+  async forgotPassword(email) {
+    try {
+      return await API.post('/api/auth/forgot-password', { email });
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Reset Password: Updates password with authenticated recovery token
+   */
+  async resetPassword(token, newPassword) {
+    try {
+      return await API.request('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ new_password: newPassword })
+      });
     } catch (error) {
       throw error;
     }

@@ -1,9 +1,11 @@
 import uuid
 import logging
 import bcrypt
+import re
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 from backend.config import settings
+from backend.models.user import normalize_phone_number
 
 logger = logging.getLogger("analytix.database")
 
@@ -295,6 +297,31 @@ class Database:
                 return p_copy
         return None
 
+    def get_profile_by_phone(self, phone: str) -> Optional[Dict[str, Any]]:
+        clean_phone = normalize_phone_number(phone)
+        if not clean_phone:
+            return None
+        if supabase_client:
+            # 1. Direct match with normalized format
+            res = supabase_client.table("profiles").select("*").eq("phone", clean_phone).execute()
+            if res.data and len(res.data) > 0:
+                p = res.data[0]
+                p["points"] = self.get_member_points(p["id"])
+                return p
+            # 2. Match across all records in case of spaces or older format
+            all_res = supabase_client.table("profiles").select("*").execute()
+            for p in (all_res.data or []):
+                if normalize_phone_number(p.get("phone", "")) == clean_phone:
+                    p["points"] = self.get_member_points(p["id"])
+                    return p
+            return None
+        for p in store.profiles.values():
+            if normalize_phone_number(p.get("phone", "")) == clean_phone:
+                p_copy = dict(p)
+                p_copy["points"] = self.get_member_points(p_copy["id"])
+                return p_copy
+        return None
+
     def create_user(self, user_dict: Dict[str, Any], password_hash: str) -> Dict[str, Any]:
         user_id = user_dict.get("id") or str(uuid.uuid4())
         now = datetime.now(timezone.utc).isoformat()
@@ -303,7 +330,7 @@ class Database:
             "id": user_id,
             "email": user_dict["email"].strip().lower(),
             "full_name": user_dict["full_name"],
-            "phone": user_dict.get("phone", ""),
+            "phone": normalize_phone_number(user_dict.get("phone", "")),
             "profile_photo": user_dict.get("profile_photo", ""),
             "department": user_dict.get("department", ""),
             "year": user_dict.get("year", ""),
@@ -329,6 +356,8 @@ class Database:
     def update_profile(self, user_id: str, updates: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         now = datetime.now(timezone.utc).isoformat()
         updates["updated_at"] = now
+        if "phone" in updates and updates["phone"]:
+            updates["phone"] = normalize_phone_number(updates["phone"])
         
         if supabase_client:
             res = supabase_client.table("profiles").update(updates).eq("id", user_id).execute()

@@ -29,26 +29,70 @@
     <div class="apple-auth-card">
       <div class="apple-logo-badge">A</div>
       <h1 class="apple-auth-title">Sign in with Analytix ID</h1>
-      <p class="apple-auth-subtitle">Use your club account credentials to access your dashboard</p>
+      <p class="apple-auth-subtitle">Use your registered email or verified mobile number</p>
 
-      <!-- Error Alert -->
+      <!-- Segmented Method Tabs -->
+      <div class="apple-tabs">
+        <button type="button" class="apple-tab-btn active" id="tab-email" onclick="switchLoginMethod('email')">
+          ✉️ Email Login
+        </button>
+        <button type="button" class="apple-tab-btn" id="tab-phone" onclick="switchLoginMethod('phone')">
+          📱 Phone & OTP
+        </button>
+      </div>
+
+      <!-- Alert Box -->
       <div id="login-alert" class="alert alert-error" style="display: none; margin-bottom: 20px;"></div>
+      <div id="login-success" class="alert alert-success" style="display: none; margin-bottom: 20px;"></div>
 
-      <form id="login-form">
-        <!-- Apple Segmented Input Container -->
+      <!-- 1. EMAIL & PASSWORD FORM -->
+      <form id="email-login-form">
         <div class="apple-input-container">
           <div class="apple-field-row">
-            <input type="email" id="email" class="apple-input" placeholder="Email or Analytix ID" required autocomplete="email">
+            <input type="email" id="email" class="apple-input" placeholder="Email address" required autocomplete="email">
             <span class="apple-field-icon">✉️</span>
           </div>
           <div class="apple-field-row">
             <input type="password" id="password" class="apple-input" placeholder="Password" required autocomplete="current-password">
-            <span class="apple-field-icon">🔒</span>
+            <button type="button" class="apple-pwd-toggle" id="toggle-pwd-btn" onclick="togglePasswordVisibility('password', this)" title="Show/Hide password">👁️</button>
           </div>
         </div>
 
-        <button type="submit" id="btn-login" class="apple-btn-submit">
+        <div class="apple-forgot-row">
+          <a href="forgot-password.html" class="apple-forgot-link">Forgot Password?</a>
+        </div>
+
+        <button type="submit" id="btn-email-login" class="apple-btn-submit">
           <span>Sign In</span>
+          <span style="font-size: 1.1rem; line-height: 1;">→</span>
+        </button>
+      </form>
+
+      <!-- 2. PHONE & OTP FORM -->
+      <form id="phone-login-form" style="display: none;">
+        <!-- Step 1: Phone input -->
+        <div class="apple-input-container" id="phone-input-group">
+          <div class="apple-field-row">
+            <input type="tel" id="phone" class="apple-input" placeholder="Phone Number (e.g. +91 98765 43210)" autocomplete="tel">
+            <span class="apple-field-icon">📱</span>
+          </div>
+          <!-- Step 2: OTP input (revealed after OTP is sent) -->
+          <div class="apple-field-row" id="otp-row" style="display: none; border-top: 1px solid #d2d2d7;">
+            <input type="text" id="otp" class="apple-input" placeholder="Enter 6-digit OTP code" maxlength="8" autocomplete="one-time-code">
+            <span class="apple-field-icon">🔑</span>
+          </div>
+        </div>
+
+        <!-- OTP Cooldown & Resend Actions -->
+        <div class="apple-otp-actions" id="otp-actions" style="display: none;">
+          <span id="otp-timer-label">Resend code in: <strong id="countdown-val">60</strong>s</span>
+          <button type="button" id="btn-resend-otp" class="apple-resend-btn" onclick="resendPhoneOtp()" disabled>
+            Resend OTP
+          </button>
+        </div>
+
+        <button type="submit" id="btn-phone-submit" class="apple-btn-submit">
+          <span id="phone-btn-text">Send OTP</span>
           <span style="font-size: 1.1rem; line-height: 1;">→</span>
         </button>
       </form>
@@ -62,19 +106,112 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script>
+    let activeMethod = 'email';
+    let otpSent = false;
+    let countdownInterval = null;
+    let resendCooldown = 60;
+
+    function switchLoginMethod(method) {
+      activeMethod = method;
+      const tabEmail = document.getElementById('tab-email');
+      const tabPhone = document.getElementById('tab-phone');
+      const formEmail = document.getElementById('email-login-form');
+      const formPhone = document.getElementById('phone-login-form');
+      const alertBox = document.getElementById('login-alert');
+      const successBox = document.getElementById('login-success');
+
+      alertBox.style.display = 'none';
+      successBox.style.display = 'none';
+
+      if (method === 'email') {
+        tabEmail.classList.add('active');
+        tabPhone.classList.remove('active');
+        formEmail.style.display = 'block';
+        formPhone.style.display = 'none';
+      } else {
+        tabPhone.classList.add('active');
+        tabEmail.classList.remove('active');
+        formEmail.style.display = 'none';
+        formPhone.style.display = 'block';
+      }
+    }
+
+    function togglePasswordVisibility(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
+    function startOtpCountdown(duration = 60) {
+      clearInterval(countdownInterval);
+      resendCooldown = duration;
+      const timerLabel = document.getElementById('otp-timer-label');
+      const countdownVal = document.getElementById('countdown-val');
+      const resendBtn = document.getElementById('btn-resend-otp');
+
+      resendBtn.disabled = true;
+      timerLabel.style.display = 'inline';
+      countdownVal.textContent = resendCooldown;
+
+      countdownInterval = setInterval(() => {
+        resendCooldown--;
+        countdownVal.textContent = resendCooldown;
+        if (resendCooldown <= 0) {
+          clearInterval(countdownInterval);
+          timerLabel.style.display = 'none';
+          resendBtn.disabled = false;
+        }
+      }, 1000);
+    }
+
+    async function resendPhoneOtp() {
+      const phoneInput = document.getElementById('phone');
+      const alertBox = document.getElementById('login-alert');
+      const successBox = document.getElementById('login-success');
+      alertBox.style.display = 'none';
+      successBox.style.display = 'none';
+
+      const phone = phoneInput.value.trim();
+      if (!phone) {
+        alertBox.textContent = 'Please enter your phone number first.';
+        alertBox.style.display = 'flex';
+        return;
+      }
+
+      try {
+        const res = await Auth.sendPhoneOtp(phone);
+        successBox.textContent = res.message || 'OTP resent successfully.';
+        successBox.style.display = 'flex';
+        startOtpCountdown(res.cooldown || 60);
+      } catch (err) {
+        alertBox.textContent = err.message || 'Failed to resend OTP.';
+        alertBox.style.display = 'flex';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      // If already logged in, redirect straight to their dashboard
+      // If already logged in, redirect directly to dashboard
       Auth.redirectIfLoggedIn();
 
-      const form = document.getElementById('login-form');
       const alertBox = document.getElementById('login-alert');
-      const submitBtn = document.getElementById('btn-login');
+      const successBox = document.getElementById('login-success');
 
-      form.addEventListener('submit', async (e) => {
+      // 1. Email form submission
+      const emailForm = document.getElementById('email-login-form');
+      const emailBtn = document.getElementById('btn-email-login');
+
+      emailForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         alertBox.style.display = 'none';
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Verifying credentials...';
+        successBox.style.display = 'none';
+        emailBtn.disabled = true;
+        emailBtn.querySelector('span:first-child').textContent = 'Verifying credentials...';
 
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
@@ -82,14 +219,83 @@
         try {
           await Auth.login(email, password);
         } catch (err) {
-          alertBox.textContent = err.message || 'Login failed. Please check credentials.';
+          alertBox.textContent = err.message || 'Invalid email or password.';
           alertBox.style.display = 'flex';
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign In to Club';
+          emailBtn.disabled = false;
+          emailBtn.querySelector('span:first-child').textContent = 'Sign In';
+        }
+      });
+
+      // 2. Phone form submission
+      const phoneForm = document.getElementById('phone-login-form');
+      const phoneBtn = document.getElementById('btn-phone-submit');
+      const phoneInput = document.getElementById('phone');
+      const otpRow = document.getElementById('otp-row');
+      const otpInput = document.getElementById('otp');
+      const otpActions = document.getElementById('otp-actions');
+      const phoneBtnText = document.getElementById('phone-btn-text');
+
+      phoneForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+        successBox.style.display = 'none';
+
+        const phone = phoneInput.value.trim();
+        if (!phone) {
+          alertBox.textContent = 'Please enter your registered phone number.';
+          alertBox.style.display = 'flex';
+          return;
+        }
+
+        if (!otpSent) {
+          // Send OTP step
+          phoneBtn.disabled = true;
+          phoneBtnText.textContent = 'Sending OTP...';
+
+          try {
+            const res = await Auth.sendPhoneOtp(phone);
+            otpSent = true;
+            otpRow.style.display = 'flex';
+            otpActions.style.display = 'flex';
+            phoneInput.readOnly = true;
+            otpInput.required = true;
+            otpInput.focus();
+
+            phoneBtnText.textContent = 'Verify & Sign In';
+            phoneBtn.disabled = false;
+
+            successBox.textContent = res.message || 'OTP sent to your phone.';
+            successBox.style.display = 'flex';
+            startOtpCountdown(res.cooldown || 60);
+          } catch (err) {
+            alertBox.textContent = err.message || 'Failed to send OTP.';
+            alertBox.style.display = 'flex';
+            phoneBtn.disabled = false;
+            phoneBtnText.textContent = 'Send OTP';
+          }
+        } else {
+          // Verify OTP step
+          const otp = otpInput.value.trim();
+          if (!otp) {
+            alertBox.textContent = 'Please enter the received OTP code.';
+            alertBox.style.display = 'flex';
+            return;
+          }
+
+          phoneBtn.disabled = true;
+          phoneBtnText.textContent = 'Verifying code...';
+
+          try {
+            await Auth.loginWithPhone(phone, otp);
+          } catch (err) {
+            alertBox.textContent = err.message || 'Invalid or expired OTP.';
+            alertBox.style.display = 'flex';
+            phoneBtn.disabled = false;
+            phoneBtnText.textContent = 'Verify & Sign In';
+          }
         }
       });
     });
   </script>
 </body>
 </html>
-
