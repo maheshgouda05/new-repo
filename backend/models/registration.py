@@ -5,10 +5,10 @@ from backend.models.event import EventOut, HackathonOut
 from backend.models.user import UserProfileOut
 
 class EventRegistrationCreate(BaseModel):
-    event_id: str
+    event_id: Optional[str] = None
 
 class HackathonRegistrationCreate(BaseModel):
-    hackathon_id: str
+    hackathon_id: Optional[str] = None
     team_name: Optional[str] = ""
 
 class RegistrationStatusUpdate(BaseModel):

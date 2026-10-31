@@ -133,16 +133,17 @@ async function loadEvents() {
         <td>
           <div style="display: flex; align-items: center; gap: 12px;">
             <img src="${ev.poster_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100'}" 
-                 style="width: 48px; height: 36px; object-fit: cover; border-radius: 4px;" alt="Poster">
+                 style="width: 48px; height: 36px; object-fit: cover; border-radius: 4px;" alt="Poster"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100';">
             <div>
-              <strong>${ev.title}</strong>
-              <div style="font-size: 0.8rem; color: #64748b;">${ev.venue}</div>
+              <strong>${API.escapeHtml(ev.title)}</strong>
+              <div style="font-size: 0.8rem; color: #64748b;">${API.escapeHtml(ev.venue)}</div>
             </div>
           </div>
         </td>
         <td>${API.formatDateTime(ev.event_date)}</td>
         <td>${API.formatDate(ev.registration_deadline)}</td>
-        <td><span class="status-pill status-${ev.status}">${ev.status}</span></td>
+        <td><span class="status-pill status-${API.escapeHtml(ev.status)}">${API.escapeHtml(ev.status)}</span></td>
         <td>
           <button onclick="viewEventRegistrations('${ev.id}', '${escapeQuotes(ev.title)}')" class="btn-table btn-table-primary">
             👥 ${ev.registrations_count || 0} registered
@@ -316,13 +317,13 @@ async function loadHackathons() {
     container.innerHTML = hackathons.map(h => `
       <tr>
         <td>
-          <strong>${h.title}</strong>
-          <div style="font-size: 0.8rem; color: #64748b;">Org: ${h.organizer}</div>
+          <strong>${API.escapeHtml(h.title)}</strong>
+          <div style="font-size: 0.8rem; color: #64748b;">Org: ${API.escapeHtml(h.organizer)}</div>
         </td>
-        <td><span class="event-badge badge-${h.mode}" style="position: static;">${h.mode}</span></td>
+        <td><span class="event-badge badge-${API.escapeHtml(h.mode)}" style="position: static;">${API.escapeHtml(h.mode)}</span></td>
         <td>${API.formatDate(h.start_date)}</td>
         <td>${API.formatDate(h.deadline)}</td>
-        <td><span class="status-pill status-${h.status}">${h.status}</span></td>
+        <td><span class="status-pill status-${API.escapeHtml(h.status)}">${API.escapeHtml(h.status)}</span></td>
         <td>
           <div class="table-actions">
             <button onclick="editHackathon('${h.id}')" class="btn-table">✏️ Edit</button>
@@ -445,14 +446,14 @@ async function loadAnnouncements() {
     container.innerHTML = announcements.map(a => `
       <tr>
         <td>
-          <strong>${a.title}</strong>
+          <strong>${API.escapeHtml(a.title)}</strong>
           <div style="font-size: 0.8rem; color: #64748b; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            ${a.description}
+            ${API.escapeHtml(a.description)}
           </div>
         </td>
-        <td><span class="skill-pill">${a.category || 'General'}</span></td>
+        <td><span class="skill-pill">${API.escapeHtml(a.category || 'General')}</span></td>
         <td>${API.formatDate(a.created_at)}</td>
-        <td><span class="status-pill status-${a.status}">${a.status}</span></td>
+        <td><span class="status-pill status-${API.escapeHtml(a.status)}">${API.escapeHtml(a.status)}</span></td>
         <td>
           <div class="table-actions">
             <button onclick="editAnnouncement('${a.id}')" class="btn-table">✏️ Edit</button>
@@ -570,11 +571,11 @@ async function loadMembers() {
         <td>
           <div style="display: flex; align-items: center; gap: 10px;">
             <div class="user-avatar" style="width: 34px; height: 34px; font-size: 0.85rem;">
-              ${m.profile_photo ? `<img src="${m.profile_photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : (m.full_name || 'U').charAt(0)}
+              ${m.profile_photo ? `<img src="${m.profile_photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.onerror=null;this.textContent='${(m.full_name || 'U').charAt(0)}';">` : (m.full_name || 'U').charAt(0)}
             </div>
             <div>
-              <strong>${m.full_name}</strong>
-              <div style="font-size: 0.78rem; color: #64748b;">${m.email}</div>
+              <strong>${API.escapeHtml(m.full_name)}</strong>
+              <div style="font-size: 0.78rem; color: #64748b;">${API.escapeHtml(m.email)}</div>
             </div>
           </div>
         </td>
@@ -597,7 +598,7 @@ async function loadMembers() {
         </td>
         <td>
           <div style="font-size: 0.82rem; color: #64748b;">
-            ${m.department || 'General'} (${m.year || 'N/A'})
+            ${API.escapeHtml(m.department || 'General')} (${API.escapeHtml(m.year || 'N/A')})
           </div>
         </td>
         <td>
@@ -691,13 +692,13 @@ async function loadRegistrations() {
 
     container.innerHTML = regs.map(r => `
       <tr>
-        <td><strong>${r.event ? r.event.title : 'Event'}</strong></td>
+        <td><strong>${r.event ? API.escapeHtml(r.event.title) : 'Event'}</strong></td>
         <td>
-          <strong>${r.member ? r.member.full_name : 'Member'}</strong>
-          <div style="font-size: 0.78rem; color: #64748b;">${r.member ? r.member.email : ''}</div>
+          <strong>${r.member ? API.escapeHtml(r.member.full_name) : 'Member'}</strong>
+          <div style="font-size: 0.78rem; color: #64748b;">${r.member ? API.escapeHtml(r.member.email) : ''}</div>
         </td>
         <td>${API.formatDateTime(r.registered_at)}</td>
-        <td><span class="status-pill status-${r.status}">${r.status}</span></td>
+        <td><span class="status-pill status-${API.escapeHtml(r.status)}">${API.escapeHtml(r.status)}</span></td>
         <td>
           <select onchange="updateRegStatus('${r.id}', this.value)" class="team-select-pill">
             <option value="pending" ${r.status === 'pending' ? 'selected' : ''}>Pending</option>

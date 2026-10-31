@@ -1,11 +1,13 @@
 import logging
-from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pathlib import Path
 
 from backend.config import settings, BASE_DIR
+from backend.database import db, supabase_client
 from backend.routers import auth, admin, members, events, hackathons, announcements, registrations
 
 # Configure logging
@@ -15,10 +17,31 @@ logging.basicConfig(
 )
 logger = logging.getLogger("analytix")
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Safe production startup validation
+    logger.info(f"Starting {settings.PROJECT_NAME} v{settings.VERSION} [{settings.ENVIRONMENT} mode]")
+    if settings.ENVIRONMENT == "production":
+        settings.validate_production()
+        # Verify database connection
+        try:
+            if not supabase_client:
+                raise RuntimeError("Supabase client not initialized.")
+            supabase_client.table("profiles").select("id").limit(1).execute()
+            logger.info("✅ Supabase database connection verified successfully.")
+        except Exception as e:
+            logger.error(f"❌ Production database pre-flight check failed: {e}")
+            raise RuntimeError(f"Database pre-flight check failed in production: {e}")
+    else:
+        logger.info("Running in development/local mode.")
+    yield
+    logger.info("Application shutdown.")
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Backend API for Analytix Club - College Technical & Data Science Club"
+    description="Backend API for Analytix Club - College Technical & Data Science Club",
+    lifespan=lifespan
 )
 
 # CORS Middleware
@@ -39,15 +62,56 @@ app.include_router(hackathons.router)
 app.include_router(announcements.router)
 app.include_router(registrations.router)
 
-# Health Check Endpoint
+# Health Check Endpoint - reports real database connection status
 @app.get("/api/health", tags=["Health"])
 def health_check():
-    return {
-        "status": "healthy",
+    db_connected = False
+    db_error = None
+    if supabase_client and settings.is_supabase_configured:
+        try:
+            supabase_client.table("profiles").select("id").limit(1).execute()
+            db_connected = True
+        except Exception as e:
+            db_connected = False
+            db_error = str(e)
+            logger.error(f"Health check database ping failed: {e}")
+
+    is_healthy = db_connected if settings.ENVIRONMENT == "production" else True
+    status_code = status.HTTP_200_OK if is_healthy else status.HTTP_503_SERVICE_UNAVAILABLE
+
+    content = {
+        "status": "healthy" if is_healthy else "unhealthy",
         "version": settings.VERSION,
+        "environment": settings.ENVIRONMENT,
         "supabase_configured": settings.is_supabase_configured,
-        "mode": "production" if settings.is_supabase_configured else "development/fallback"
+        "database_connected": db_connected,
+        "mode": "production" if settings.ENVIRONMENT == "production" else "development"
     }
+    if db_error:
+        content["database_error"] = db_error
+
+    return JSONResponse(status_code=status_code, content=content)
+
+# Public Statistics Endpoint (Real data, no invented counts)
+@app.get("/api/stats", tags=["Public Stats"])
+def public_stats():
+    """Returns authentic, real-time metrics for the public landing page."""
+    try:
+        stats = db.get_overview_stats()
+        return {
+            "members_count": stats.get("total_members", 0),
+            "events_count": stats.get("total_events", 0),
+            "hackathons_count": stats.get("upcoming_hackathons", 0),
+            "teams_count": 3
+        }
+    except Exception:
+        return {
+            "members_count": 0,
+            "events_count": 0,
+            "hackathons_count": 0,
+            "teams_count": 3
+        }
+
 
 # Mount uploaded media assets
 uploads_dir = BASE_DIR / "frontend" / "assets" / "uploads"

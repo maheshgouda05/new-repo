@@ -53,34 +53,6 @@
         </button>
       </form>
 
-      <!-- Apple-style Fast Account Switcher -->
-      <div class="apple-demo-section">
-        <div class="apple-demo-label">Quick Account Sign-in (1-Click)</div>
-        <div class="apple-demo-cards">
-          <div class="apple-account-card" onclick="fillCredentials('admin@analytixclub.edu', 'Admin@123')">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <div class="apple-account-avatar" style="width: 32px; height: 32px; font-size: 0.85rem;">A</div>
-              <div class="apple-account-info">
-                <strong>Arjun Sharma</strong>
-                <span>admin@analytixclub.edu</span>
-              </div>
-            </div>
-            <span class="apple-account-role">Admin</span>
-          </div>
-
-          <div class="apple-account-card" onclick="fillCredentials('member@analytixclub.edu', 'Member@123')">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <div class="apple-account-avatar" style="width: 32px; height: 32px; font-size: 0.85rem; background: #10b981;">P</div>
-              <div class="apple-account-info">
-                <strong>Priya Nair</strong>
-                <span>member@analytixclub.edu</span>
-              </div>
-            </div>
-            <span class="apple-account-role" style="color: #10b981; border-color: rgba(16, 185, 129, 0.3);">Member</span>
-          </div>
-        </div>
-      </div>
-
       <div class="apple-footer-link">
         Don’t have an Analytix ID? <a href="register.html">Create yours now</a>
       </div>
@@ -117,13 +89,6 @@
         }
       });
     });
-
-    function fillCredentials(email, password) {
-      document.getElementById('email').value = email;
-      document.getElementById('password').value = password;
-      const alertBox = document.getElementById('login-alert');
-      if (alertBox) alertBox.style.display = 'none';
-    }
   </script>
 </body>
 </html>

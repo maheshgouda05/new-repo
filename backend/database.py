@@ -18,9 +18,13 @@ if settings.is_supabase_configured:
         )
         logger.info("Connected to Supabase PostgreSQL.")
     except Exception as e:
-        logger.error(f"Failed to initialize Supabase client: {e}. Falling back to local data store.")
+        logger.error(f"Failed to initialize Supabase client: {e}")
         supabase_client = None
+        if settings.ENVIRONMENT == "production":
+            raise RuntimeError(f"CRITICAL: Failed to initialize Supabase client in production: {e}")
 else:
+    if settings.ENVIRONMENT == "production":
+        raise RuntimeError("CRITICAL: Supabase credentials are missing in production! In-memory fallback is disabled.")
     logger.info("Supabase credentials not configured. Running in local standalone/development mode.")
 
 # ==============================================================================
@@ -824,30 +828,67 @@ class Database:
 
     # --- ADMIN OVERVIEW STATS ---
     def get_overview_stats(self) -> Dict[str, Any]:
-        total_members = len(store.profiles) if not supabase_client else len(supabase_client.table("profiles").select("id").execute().data or [])
-        total_events = len(store.events) if not supabase_client else len(supabase_client.table("events").select("id").execute().data or [])
-        total_hackathons = len(store.hackathons) if not supabase_client else len(supabase_client.table("hackathons").select("id").execute().data or [])
-        total_registrations = len(store.registrations) if not supabase_client else len(supabase_client.table("registrations").select("id").execute().data or [])
+        if supabase_client:
+            try:
+                total_members = len(supabase_client.table("profiles").select("id").execute().data or [])
+                total_events = len(supabase_client.table("events").select("id").execute().data or [])
+                total_hackathons = len(supabase_client.table("hackathons").select("id").execute().data or [])
+                total_registrations = len(supabase_client.table("registrations").select("id").execute().data or [])
+            except Exception as e:
+                logger.error(f"Error querying Supabase overview stats: {e}")
+                if settings.ENVIRONMENT == "production":
+                    raise
+                total_members, total_events, total_hackathons, total_registrations = 0, 0, 0, 0
+        elif settings.ENVIRONMENT == "production":
+            raise RuntimeError("Database unavailable in production environment.")
+        else:
+            total_members = len(store.profiles)
+            total_events = len(store.events)
+            total_hackathons = len(store.hackathons)
+            total_registrations = len(store.registrations)
         
         # Recent activities
         recent_activities = []
-        # Pull latest registrations
-        for r in list(store.registrations.values())[-5:]:
-            mem = store.profiles.get(r.get("member_id"), {})
-            ev = store.events.get(r.get("event_id"), {})
-            recent_activities.append({
-                "type": "registration",
-                "message": f"{mem.get('full_name', 'A member')} registered for {ev.get('title', 'an event')}",
-                "timestamp": r.get("registered_at")
-            })
-        # Pull latest points awards
-        for l in store.leaderboard_records[-5:]:
-            mem = store.profiles.get(l.get("member_id"), {})
-            recent_activities.append({
-                "type": "award",
-                "message": f"+{l.get('points')} points awarded to {mem.get('full_name', 'a member')} ({l.get('activity_description')})",
-                "timestamp": l.get("created_at")
-            })
+        if supabase_client:
+            try:
+                # Latest event registrations
+                reg_res = supabase_client.table("registrations").select("registered_at, profiles(full_name), events(title)").order("registered_at", desc=True).limit(5).execute()
+                for r in (reg_res.data or []):
+                    m_name = (r.get("profiles") or {}).get("full_name", "A member")
+                    e_title = (r.get("events") or {}).get("title", "an event")
+                    recent_activities.append({
+                        "type": "registration",
+                        "message": f"{m_name} registered for {e_title}",
+                        "timestamp": r.get("registered_at")
+                    })
+                # Latest points awarded
+                lb_res = supabase_client.table("leaderboard").select("points, activity_description, created_at, profiles(full_name)").order("created_at", desc=True).limit(5).execute()
+                for l in (lb_res.data or []):
+                    m_name = (l.get("profiles") or {}).get("full_name", "A member")
+                    recent_activities.append({
+                        "type": "award",
+                        "message": f"+{l.get('points')} points awarded to {m_name} ({l.get('activity_description')})",
+                        "timestamp": l.get("created_at")
+                    })
+            except Exception as e:
+                logger.error(f"Error querying Supabase recent activities: {e}")
+        elif settings.ENVIRONMENT != "production":
+            # Only use in-memory store in local development
+            for r in list(store.registrations.values())[-5:]:
+                mem = store.profiles.get(r.get("member_id"), {})
+                ev = store.events.get(r.get("event_id"), {})
+                recent_activities.append({
+                    "type": "registration",
+                    "message": f"{mem.get('full_name', 'A member')} registered for {ev.get('title', 'an event')}",
+                    "timestamp": r.get("registered_at")
+                })
+            for l in store.leaderboard_records[-5:]:
+                mem = store.profiles.get(l.get("member_id"), {})
+                recent_activities.append({
+                    "type": "award",
+                    "message": f"+{l.get('points')} points awarded to {mem.get('full_name', 'a member')} ({l.get('activity_description')})",
+                    "timestamp": l.get("created_at")
+                })
 
         recent_activities = sorted(recent_activities, key=lambda x: x.get("timestamp", ""), reverse=True)[:10]
 

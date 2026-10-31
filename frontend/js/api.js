@@ -82,7 +82,18 @@ const API = {
       const data = isJson ? await response.json() : await response.text();
 
       if (!response.ok) {
-        const errorDetail = (data && data.detail) || (typeof data === 'string' ? data : 'An unexpected error occurred');
+        let errorDetail = 'An unexpected error occurred';
+        if (data && typeof data === 'object') {
+          if (Array.isArray(data.detail)) {
+            errorDetail = data.detail.map(d => d.msg || JSON.stringify(d)).join(', ');
+          } else if (data.detail) {
+            errorDetail = data.detail;
+          } else if (data.message) {
+            errorDetail = data.message;
+          }
+        } else if (typeof data === 'string' && data.trim()) {
+          errorDetail = data;
+        }
         throw new Error(errorDetail);
       }
 
@@ -91,6 +102,16 @@ const API = {
       console.error(`API Error [${options.method || 'GET'} ${endpoint}]:`, error);
       throw error;
     }
+  },
+
+  escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   },
 
   get(endpoint) {
@@ -139,8 +160,9 @@ const API = {
 
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
+    const cleanMsg = this.escapeHtml(message);
     toast.innerHTML = `
-      <span class="toast-message">${message}</span>
+      <span class="toast-message">${cleanMsg}</span>
     `;
     container.appendChild(toast);
 
@@ -152,23 +174,25 @@ const API = {
   },
 
   formatDate(dateStr) {
-    if (!dateStr) return 'N/A';
+    if (!dateStr) return 'TBA';
     try {
       const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return String(dateStr);
       return d.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
       });
     } catch (e) {
-      return dateStr;
+      return dateStr || 'TBA';
     }
   },
 
   formatDateTime(dateStr) {
-    if (!dateStr) return 'N/A';
+    if (!dateStr) return 'TBA';
     try {
       const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return String(dateStr);
       return d.toLocaleString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -177,7 +201,7 @@ const API = {
         minute: '2-digit'
       });
     } catch (e) {
-      return dateStr;
+      return dateStr || 'TBA';
     }
   }
 };

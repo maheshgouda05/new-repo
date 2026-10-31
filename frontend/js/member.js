@@ -2,6 +2,7 @@
  * ANALYTIX CLUB - MEMBER DASHBOARD SCRIPT
  * Manages member view: dashboard metrics, upcoming events,
  * my registrations, club hackathons, announcements, and leaderboard.
+ * Hardened with XSS protection and image fallbacks.
  */
 
 let currentMember = null;
@@ -78,7 +79,7 @@ async function loadMemberDashboard() {
     const welcomeName = document.getElementById('member-welcome-name');
     if (welcomeName) welcomeName.textContent = data.member.full_name;
 
-    // Stat cards (if present)
+    // Stat cards (if present in DOM)
     const pointsEl = document.getElementById('member-points-stat');
     if (pointsEl) pointsEl.textContent = data.total_points;
     const rankEl = document.getElementById('member-rank-stat');
@@ -94,26 +95,35 @@ async function loadMemberDashboard() {
       if (!data.upcoming_events || !data.upcoming_events.length) {
         eventsContainer.innerHTML = `<p style="color: #64748b; padding: 12px 0;">No upcoming club events scheduled right now. Check back soon!</p>`;
       } else {
-        eventsContainer.innerHTML = data.upcoming_events.map(ev => `
-          <div class="event-card" style="box-shadow: none; border: 1px solid #e2e8f0;">
-            <div class="event-poster-wrapper" style="height: 120px;">
-              <img src="${ev.poster_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400'}" class="event-poster" alt="Poster">
-            </div>
-            <div class="event-content" style="padding: 16px;">
-              <div class="event-meta" style="margin-bottom: 6px; font-size: 0.8rem;">
-                <span>📅 ${API.formatDate(ev.event_date)}</span>
-                <span>📍 ${ev.venue}</span>
+        eventsContainer.innerHTML = data.upcoming_events.map(ev => {
+          const cleanTitle = API.escapeHtml(ev.title);
+          const cleanVenue = API.escapeHtml(ev.venue);
+          const posterUrl = ev.poster_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400';
+
+          return `
+            <div class="event-card" style="box-shadow: none; border: 1px solid #e2e8f0;">
+              <div class="event-poster-wrapper" style="height: 120px;">
+                <img src="${posterUrl}" 
+                     class="event-poster" 
+                     alt="${cleanTitle}"
+                     onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400';">
               </div>
-              <h4 style="font-size: 1.05rem; margin-bottom: 12px;">${ev.title}</h4>
-              <div class="event-footer" style="padding-top: 10px;">
-                ${ev.is_registered 
-                  ? `<span class="status-pill status-approved">Registered (${ev.my_registration_status})</span>`
-                  : `<button onclick="registerForEvent('${ev.id}')" class="btn btn-primary btn-sm">Register</button>`
-                }
+              <div class="event-content" style="padding: 16px;">
+                <div class="event-meta" style="margin-bottom: 6px; font-size: 0.8rem;">
+                  <span>📅 ${API.formatDate(ev.event_date)}</span>
+                  <span>📍 ${cleanVenue}</span>
+                </div>
+                <h4 style="font-size: 1.05rem; margin-bottom: 12px;">${cleanTitle}</h4>
+                <div class="event-footer" style="padding-top: 10px;">
+                  ${ev.is_registered 
+                    ? `<span class="status-pill status-approved">Registered (${API.escapeHtml(ev.my_registration_status || 'pending')})</span>`
+                    : `<button onclick="registerForEvent('${ev.id}')" class="btn btn-primary btn-sm">Register</button>`
+                  }
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
     }
 
@@ -128,10 +138,10 @@ async function loadMemberDashboard() {
             <div class="announcement-icon" style="width: 38px; height: 38px; font-size: 1.1rem;">📢</div>
             <div class="announcement-body">
               <div class="announcement-header">
-                <strong style="font-size: 0.98rem;">${a.title}</strong>
+                <strong style="font-size: 0.98rem;">${API.escapeHtml(a.title)}</strong>
                 <span class="announcement-time">${API.formatDate(a.created_at)}</span>
               </div>
-              <p style="font-size: 0.88rem; color: #64748b; margin-top: 4px;">${a.description}</p>
+              <p style="font-size: 0.88rem; color: #64748b; margin-top: 4px;">${API.escapeHtml(a.description)}</p>
             </div>
           </div>
         `).join('');
@@ -158,32 +168,43 @@ async function loadMemberEvents() {
       return;
     }
 
-    container.innerHTML = events.map(ev => `
-      <div class="event-card">
-        <div class="event-poster-wrapper">
-          <img src="${ev.poster_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600'}" class="event-poster" alt="Poster">
-          <span class="event-badge badge-published">${ev.status}</span>
-        </div>
-        <div class="event-content">
-          <div class="event-meta">
-            <span>📅 ${API.formatDate(ev.event_date)}</span>
-            <span>📍 ${ev.venue}</span>
+    container.innerHTML = events.map(ev => {
+      const cleanTitle = API.escapeHtml(ev.title);
+      const cleanDesc = API.escapeHtml(ev.description);
+      const cleanVenue = API.escapeHtml(ev.venue);
+      const cleanInstructions = API.escapeHtml(ev.instructions || '');
+      const posterUrl = ev.poster_url || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600';
+
+      return `
+        <div class="event-card">
+          <div class="event-poster-wrapper">
+            <img src="${posterUrl}" 
+                 class="event-poster" 
+                 alt="${cleanTitle}"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600';">
+            <span class="event-badge badge-published">${API.escapeHtml(ev.status)}</span>
           </div>
-          <h3 class="event-title">${ev.title}</h3>
-          <p class="event-desc">${ev.description}</p>
-          ${ev.instructions ? `<div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 16px; color: #475569;"><strong>Instructions:</strong> ${ev.instructions}</div>` : ''}
-          <div class="event-footer">
-            <span style="font-size: 0.82rem; color: #64748b;">Deadline: ${API.formatDate(ev.registration_deadline)}</span>
-            ${ev.is_registered
-              ? `<span class="status-pill status-${ev.my_registration_status || 'approved'}">Registered (${ev.my_registration_status || 'pending'})</span>`
-              : `<button onclick="registerForEvent('${ev.id}')" class="btn btn-primary btn-sm">Register Now</button>`
-            }
+          <div class="event-content">
+            <div class="event-meta">
+              <span>📅 ${API.formatDate(ev.event_date)}</span>
+              <span>📍 ${cleanVenue}</span>
+            </div>
+            <h3 class="event-title">${cleanTitle}</h3>
+            <p class="event-desc">${cleanDesc}</p>
+            ${cleanInstructions ? `<div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 16px; color: #475569;"><strong>Instructions:</strong> ${cleanInstructions}</div>` : ''}
+            <div class="event-footer">
+              <span style="font-size: 0.82rem; color: #64748b;">Deadline: ${API.formatDate(ev.registration_deadline)}</span>
+              ${ev.is_registered
+                ? `<span class="status-pill status-${ev.my_registration_status || 'approved'}">Registered (${API.escapeHtml(ev.my_registration_status || 'pending')})</span>`
+                : `<button onclick="registerForEvent('${ev.id}')" class="btn btn-primary btn-sm">Register Now</button>`
+              }
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   } catch (err) {
-    container.innerHTML = `<p style="color: red; text-align: center; grid-column: 1/-1;">Failed to load events.</p>`;
+    container.innerHTML = `<p style="color: red; text-align: center; grid-column: 1/-1;">Failed to load events: ${API.escapeHtml(err.message)}</p>`;
   }
 }
 
@@ -194,7 +215,7 @@ async function registerForEvent(eventId) {
     loadMemberEvents();
     loadMemberDashboard();
   } catch (err) {
-    API.toast(err.message, 'warning');
+    API.toast(err.message || 'Registration failed', 'warning');
   }
 }
 
@@ -213,41 +234,54 @@ async function loadMemberHackathons() {
       return;
     }
 
-    container.innerHTML = hackathons.map(h => `
-      <div class="event-card">
-        <div class="event-poster-wrapper">
-          <img src="${h.poster_url || 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600'}" class="event-poster" alt="Poster">
-          <span class="event-badge badge-${h.mode}">${h.mode}</span>
-        </div>
-        <div class="event-content">
-          <div class="event-meta">
-            <span>📅 Starts: ${API.formatDate(h.start_date)}</span>
-            <span>📍 ${h.location}</span>
-          </div>
-          <h3 class="event-title">${h.title}</h3>
-          <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-bottom: 8px;">Organized by ${h.organizer}</div>
-          <p class="event-desc">${h.description}</p>
-          
-          <div style="margin-bottom: 16px; font-size: 0.82rem; color: #64748b;">
-            <div><strong>Eligibility:</strong> ${h.eligibility}</div>
-            ${h.required_skills ? `<div><strong>Skills:</strong> ${h.required_skills}</div>` : ''}
-          </div>
+    container.innerHTML = hackathons.map(h => {
+      const cleanTitle = API.escapeHtml(h.title);
+      const cleanOrg = API.escapeHtml(h.organizer);
+      const cleanDesc = API.escapeHtml(h.description);
+      const cleanLoc = API.escapeHtml(h.location);
+      const cleanElig = API.escapeHtml(h.eligibility);
+      const cleanSkills = API.escapeHtml(h.required_skills || '');
+      const posterUrl = h.poster_url || 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600';
 
-          <div class="event-footer">
-            <span style="font-size: 0.82rem; color: #64748b;">Deadline: ${API.formatDate(h.deadline)}</span>
-            <div style="display: flex; gap: 8px;">
-              ${h.registration_link ? `<a href="${h.registration_link}" target="_blank" class="btn btn-secondary btn-sm">External Link ↗</a>` : ''}
-              ${h.is_registered 
-                ? `<span class="status-pill status-approved">Applied</span>`
-                : `<button onclick="applyForHackathon('${h.id}')" class="btn btn-primary btn-sm">Apply Club Team</button>`
-              }
+      return `
+        <div class="event-card">
+          <div class="event-poster-wrapper">
+            <img src="${posterUrl}" 
+                 class="event-poster" 
+                 alt="${cleanTitle}"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600';">
+            <span class="event-badge badge-${API.escapeHtml(h.mode)}">${API.escapeHtml(h.mode)}</span>
+          </div>
+          <div class="event-content">
+            <div class="event-meta">
+              <span>📅 Starts: ${API.formatDate(h.start_date)}</span>
+              <span>📍 ${cleanLoc}</span>
+            </div>
+            <h3 class="event-title">${cleanTitle}</h3>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-bottom: 8px;">Organized by ${cleanOrg}</div>
+            <p class="event-desc">${cleanDesc}</p>
+            
+            <div style="margin-bottom: 16px; font-size: 0.82rem; color: #64748b;">
+              <div><strong>Eligibility:</strong> ${cleanElig}</div>
+              ${cleanSkills ? `<div><strong>Skills:</strong> ${cleanSkills}</div>` : ''}
+            </div>
+
+            <div class="event-footer">
+              <span style="font-size: 0.82rem; color: #64748b;">Deadline: ${API.formatDate(h.deadline)}</span>
+              <div style="display: flex; gap: 8px;">
+                ${h.registration_link ? `<a href="${encodeURI(h.registration_link)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">External Link ↗</a>` : ''}
+                ${h.is_registered 
+                  ? `<span class="status-pill status-approved">Applied</span>`
+                  : `<button onclick="applyForHackathon('${h.id}')" class="btn btn-primary btn-sm">Apply Club Team</button>`
+                }
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   } catch (err) {
-    container.innerHTML = `<p style="color: red; text-align: center; grid-column: 1/-1;">Failed to load hackathons.</p>`;
+    container.innerHTML = `<p style="color: red; text-align: center; grid-column: 1/-1;">Failed to load hackathons: ${API.escapeHtml(err.message)}</p>`;
   }
 }
 
@@ -260,7 +294,7 @@ async function applyForHackathon(hackathonId) {
     API.toast('Hackathon application submitted!', 'success');
     loadMemberHackathons();
   } catch (err) {
-    API.toast(err.message, 'warning');
+    API.toast(err.message || 'Application failed', 'warning');
   }
 }
 
@@ -285,18 +319,18 @@ async function loadMemberAnnouncements() {
         <div class="announcement-body">
           <div class="announcement-header">
             <div>
-              <strong style="font-size: 1.15rem;">${a.title}</strong>
-              <span class="skill-pill" style="margin-left: 10px;">${a.category || 'General'}</span>
+              <strong style="font-size: 1.15rem;">${API.escapeHtml(a.title)}</strong>
+              <span class="skill-pill" style="margin-left: 10px;">${API.escapeHtml(a.category || 'General')}</span>
             </div>
             <span class="announcement-time">${API.formatDate(a.created_at)}</span>
           </div>
-          <p class="announcement-desc" style="margin-top: 8px;">${a.description}</p>
-          ${a.image_url ? `<img src="${a.image_url}" style="max-width: 320px; border-radius: 8px; margin-top: 12px;" alt="Notice Image">` : ''}
+          <p class="announcement-desc" style="margin-top: 8px;">${API.escapeHtml(a.description)}</p>
+          ${a.image_url ? `<img src="${a.image_url}" style="max-width: 320px; border-radius: 8px; margin-top: 12px; width: 100%; object-fit: cover;" alt="${API.escapeHtml(a.title)}" onerror="this.style.display='none'">` : ''}
         </div>
       </div>
     `).join('');
   } catch (err) {
-    container.innerHTML = `<p style="color: red; text-align: center;">Failed to load announcements.</p>`;
+    container.innerHTML = `<p style="color: red; text-align: center;">Failed to load announcements: ${API.escapeHtml(err.message)}</p>`;
   }
 }
 
@@ -320,10 +354,10 @@ async function loadMyRegistrations() {
       } else {
         eventTable.innerHTML = data.events.map(r => `
           <tr>
-            <td><strong>${r.event ? r.event.title : 'Event'}</strong></td>
+            <td><strong>${r.event ? API.escapeHtml(r.event.title) : 'Event'}</strong></td>
             <td>${r.event ? API.formatDateTime(r.event.event_date) : 'N/A'}</td>
             <td>${API.formatDate(r.registered_at)}</td>
-            <td><span class="status-pill status-${r.status}">${r.status}</span></td>
+            <td><span class="status-pill status-${API.escapeHtml(r.status)}">${API.escapeHtml(r.status)}</span></td>
           </tr>
         `).join('');
       }
@@ -336,17 +370,17 @@ async function loadMyRegistrations() {
       } else {
         hackTable.innerHTML = data.hackathons.map(h => `
           <tr>
-            <td><strong>${h.hackathon ? h.hackathon.title : 'Hackathon'}</strong></td>
-            <td>${h.team_name || 'Individual'}</td>
+            <td><strong>${h.hackathon ? API.escapeHtml(h.hackathon.title) : 'Hackathon'}</strong></td>
+            <td>${API.escapeHtml(h.team_name || 'Individual')}</td>
             <td>${API.formatDate(h.registered_at)}</td>
-            <td><span class="status-pill status-approved">${h.status}</span></td>
+            <td><span class="status-pill status-approved">${API.escapeHtml(h.status)}</span></td>
           </tr>
         `).join('');
       }
     }
 
   } catch (err) {
-    API.toast('Failed to load my registrations', 'error');
+    API.toast('Failed to load my registrations: ' + err.message, 'error');
   }
 }
 
@@ -365,31 +399,37 @@ async function loadMemberLeaderboard() {
       return;
     }
 
-    container.innerHTML = leaderboard.map(item => `
-      <tr style="${item.member_id === currentMember.id ? 'background-color: #f0fdf4;' : ''}">
-        <td>
-          <strong style="font-size: 1.1rem; color: ${item.rank === 1 ? '#d97706' : item.rank === 2 ? '#64748b' : item.rank === 3 ? '#b45309' : '#0f172a'};">
-            #${item.rank}
-          </strong>
-        </td>
-        <td>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">
-              ${item.profile_photo ? `<img src="${item.profile_photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : (item.full_name || 'U').charAt(0)}
+    container.innerHTML = leaderboard.map(item => {
+      const cleanName = API.escapeHtml(item.full_name);
+      const cleanTeam = API.escapeHtml(item.team || 'None');
+      const cleanInitial = (item.full_name || 'U').charAt(0).toUpperCase();
+
+      return `
+        <tr style="${item.member_id === currentMember.id ? 'background-color: #f0fdf4;' : ''}">
+          <td>
+            <strong style="font-size: 1.1rem; color: ${item.rank === 1 ? '#d97706' : item.rank === 2 ? '#64748b' : item.rank === 3 ? '#b45309' : '#0f172a'};">
+              #${item.rank}
+            </strong>
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                ${item.profile_photo ? `<img src="${item.profile_photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.onerror=null;this.textContent='${cleanInitial}';">` : cleanInitial}
+              </div>
+              <div>
+                <strong>${cleanName}</strong>
+                ${item.member_id === currentMember.id ? `<span class="skill-pill" style="margin-left: 6px; background: #bbf7d0; color: #166534;">You</span>` : ''}
+              </div>
             </div>
-            <div>
-              <strong>${item.full_name}</strong>
-              ${item.member_id === currentMember.id ? `<span class="skill-pill" style="margin-left: 6px; background: #bbf7d0; color: #166534;">You</span>` : ''}
-            </div>
-          </div>
-        </td>
-        <td><span class="skill-pill">${item.team || 'None'}</span></td>
-        <td><span class="points-pill">⭐ ${item.total_points}</span></td>
-        <td>${item.activities_count} activities</td>
-      </tr>
-    `).join('');
+          </td>
+          <td><span class="skill-pill">${cleanTeam}</span></td>
+          <td><span class="points-pill">⭐ ${item.total_points}</span></td>
+          <td>${item.activities_count} activities</td>
+        </tr>
+      `;
+    }).join('');
   } catch (err) {
-    container.innerHTML = `<tr><td colspan="5" class="text-center" style="color: red;">Failed to load leaderboard.</td></tr>`;
+    container.innerHTML = `<tr><td colspan="5" class="text-center" style="color: red;">Failed to load leaderboard: ${API.escapeHtml(err.message)}</td></tr>`;
   }
 }
 
@@ -408,7 +448,7 @@ function loadMemberProfileForm() {
   document.getElementById('member-profile-photo').value = currentMember.profile_photo || '';
 
   // Read-only badges & Header Strip
-  document.getElementById('member-badge-role').textContent = currentMember.role.toUpperCase();
+  document.getElementById('member-badge-role').textContent = (currentMember.role || 'MEMBER').toUpperCase();
   document.getElementById('member-badge-team').textContent = `TEAM: ${(currentMember.team || 'None').toUpperCase()}`;
   document.getElementById('member-badge-points').textContent = `${currentMember.points || 0} pts`;
 
@@ -421,7 +461,7 @@ function loadMemberProfileForm() {
   const avatarCircle = document.getElementById('member-avatar-circle');
   if (avatarCircle) {
     if (currentMember.profile_photo) {
-      avatarCircle.innerHTML = `<img src="${currentMember.profile_photo}" alt="Avatar">`;
+      avatarCircle.innerHTML = `<img src="${currentMember.profile_photo}" alt="Avatar" onerror="this.onerror=null;this.textContent='M';">`;
     } else {
       avatarCircle.textContent = (currentMember.full_name || 'M').charAt(0).toUpperCase();
     }
@@ -451,4 +491,3 @@ async function handleMemberProfileSubmit(e) {
     API.toast('Update failed: ' + err.message, 'error');
   }
 }
-
