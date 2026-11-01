@@ -20,7 +20,7 @@
       </a>
 
       <ul class="nav-links">
-        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="index.html" class="nav-link active" aria-current="page">Home</a></li>
         <li><a href="#about" class="nav-link">About</a></li>
         <li><a href="#teams" class="nav-link">Our Teams</a></li>
         <li><a href="events.html" class="nav-link">Events</a></li>
@@ -29,8 +29,8 @@
       </ul>
 
       <div class="nav-actions" id="nav-auth-actions">
-        <a href="login.html" class="apple-signin-pill">Sign In</a>
-        <a href="register.html" class="btn btn-secondary btn-sm" style="border-radius: 9999px;">Join Club</a>
+        <a href="login.html" class="btn btn-secondary btn-sm" style="border-radius: 9999px;">Sign In</a>
+        <a href="register.html" class="btn btn-primary btn-sm" style="border-radius: 9999px;">Join Club</a>
       </div>
 
       <button class="nav-mobile-toggle" aria-label="Toggle Navigation">☰</button>
@@ -56,25 +56,25 @@
 
       <div class="hero-card">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-          <div style="font-weight: 700; color: var(--dark-bg); font-size: 1.1rem;">⚡ Club Pulse</div>
+          <div style="font-weight: 700; color: var(--dark-bg); font-size: var(--font-md, 1.125rem);">⚡ Club Pulse</div>
           <span class="status-pill status-approved">Active Term</span>
         </div>
 
-        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
+        <p style="color: var(--text-muted); font-size: var(--font-sm, 0.875rem); line-height: 1.6; margin-bottom: 20px;">
           Join an active student community of engineers, data analysts, and designers pushing boundaries across Artificial Intelligence, Full-Stack Development, and Creative Media.
         </p>
 
         <div class="stat-strip">
           <div class="stat-item">
-            <h3 id="stat-members-count">--</h3>
+            <span class="stat-value" id="stat-members-count">--</span>
             <p>Club Members</p>
           </div>
           <div class="stat-item">
-            <h3 id="stat-events-count">--</h3>
+            <span class="stat-value" id="stat-events-count">--</span>
             <p>Active Events</p>
           </div>
           <div class="stat-item">
-            <h3 id="stat-hackathons-count">--</h3>
+            <span class="stat-value" id="stat-hackathons-count">--</span>
             <p>Open Hackathons</p>
           </div>
         </div>
@@ -203,7 +203,7 @@
         <p class="section-desc">Important circulars, opportunities, and recruitment announcements.</p>
       </div>
 
-      <div style="max-width: 800px; margin: 0 auto;" id="home-announcements-list">
+      <div style="max-width: 720px; margin: 0 auto;" id="home-announcements-list">
         <!-- Loaded dynamically from API -->
       </div>
 
@@ -228,7 +228,7 @@
         </div>
 
         <div>
-          <h4 class="footer-heading">Navigation</h4>
+          <h3 class="footer-heading">Navigation</h3>
           <ul class="footer-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="#about">About</a></li>
@@ -239,7 +239,7 @@
         </div>
 
         <div>
-          <h4 class="footer-heading">Club Portals</h4>
+          <h3 class="footer-heading">Club Portals</h3>
           <ul class="footer-links">
             <li><a href="login.html">Member Login</a></li>
             <li><a href="register.html">Join Club</a></li>
@@ -249,9 +249,11 @@
         </div>
 
         <div>
-          <h4 class="footer-heading">Club Inquiries</h4>
-          <p class="footer-desc" style="margin-bottom: 8px;">Student Technical Activity Center</p>
-          <p class="footer-desc">Email: <a href="mailto:contact@analytixclub.edu" style="color: #cbd5e1;">contact@analytixclub.edu</a></p>
+          <h3 class="footer-heading">Club Inquiries</h3>
+          <ul class="footer-links footer-contact-list">
+            <li>📍 <span>Student Technical Activity Center</span></li>
+            <li>✉️ <a href="mailto:contact@analytixclub.edu">contact@analytixclub.edu</a></li>
+          </ul>
         </div>
       </div>
 

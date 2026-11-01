@@ -85,18 +85,20 @@ async function loadPublicEvents(currentUser) {
               <span>📅 ${API.formatDate(ev.event_date)}</span>
               <span>📍 ${cleanVenue}</span>
             </div>
-            <h3 class="event-title">${cleanTitle}</h3>
+            <h2 class="event-title">${cleanTitle}</h2>
             <p class="event-desc">${cleanDesc}</p>
-            ${cleanInstructions ? `<div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 10px 14px; border-radius: 6px; font-size: 0.82rem; margin-bottom: 16px; color: #475569;"><strong>Instructions:</strong> ${cleanInstructions}</div>` : ''}
-            <div class="event-footer">
-              <span style="font-size: 0.82rem; color: #64748b;">Deadline: ${API.formatDate(ev.registration_deadline)}</span>
-              ${currentUser
-                ? (ev.is_registered
-                    ? `<span class="status-pill status-${ev.my_registration_status || 'approved'}">Registered (${API.escapeHtml(ev.my_registration_status || 'pending')})</span>`
-                    : `<button onclick="handleEventRegister('${ev.id}')" class="btn btn-primary btn-sm">Register</button>`
-                  )
-                : `<a href="login.html" class="btn btn-primary btn-sm">Login to Register</a>`
-              }
+            <div class="event-bottom-section">
+              ${cleanInstructions ? `<div class="event-instructions"><strong>Instructions:</strong> ${cleanInstructions}</div>` : ''}
+              <div class="event-footer">
+                <span class="event-deadline">Deadline: ${API.formatDate(ev.registration_deadline)}</span>
+                ${currentUser
+                  ? (ev.is_registered
+                      ? `<span class="status-pill status-${ev.my_registration_status || 'approved'}">Registered (${API.escapeHtml(ev.my_registration_status || 'pending')})</span>`
+                      : `<button onclick="handleEventRegister('${ev.id}')" class="btn btn-primary btn-sm">Register</button>`
+                    )
+                  : `<a href="login.html" class="btn btn-primary btn-sm">Login to Register</a>`
+                }
+              </div>
             </div>
           </div>
         </div>
@@ -253,13 +255,13 @@ async function loadPublicAnnouncements() {
           <div class="announcement-icon">📢</div>
           <div class="announcement-body">
             <div class="announcement-header">
-              <div>
-                <strong style="font-size: 1.2rem;">${cleanTitle}</strong>
-                <span class="skill-pill" style="margin-left: 10px;">${cleanCategory}</span>
+              <div class="announcement-title-group">
+                <h3 class="announcement-title">${cleanTitle}</h3>
+                <span class="skill-pill">${cleanCategory}</span>
+                <span class="announcement-time">· ${API.formatDate(a.created_at)}</span>
               </div>
-              <span class="announcement-time">${API.formatDate(a.created_at)}</span>
             </div>
-            <p class="announcement-desc" style="margin-top: 10px; font-size: 0.95rem;">${cleanDesc}</p>
+            <p class="announcement-desc" style="margin-top: 8px;">${cleanDesc}</p>
             ${imageUrl ? `<img src="${imageUrl}" style="max-width: 480px; border-radius: 8px; margin-top: 14px; width: 100%; object-fit: cover;" alt="${cleanTitle}" onerror="this.style.display='none'">` : ''}
           </div>
         </div>
@@ -308,15 +310,17 @@ async function loadLandingPageData(currentUser) {
                      alt="${cleanTitle}"
                      onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500';">
               </div>
-              <div class="event-content" style="padding: 20px;">
-                <div class="event-meta" style="font-size: 0.8rem;">
+              <div class="event-content">
+                <div class="event-meta">
                   <span>📅 ${API.formatDate(ev.event_date)}</span>
                   <span>📍 ${cleanVenue}</span>
                 </div>
-                <h4 style="font-size: 1.15rem; margin-bottom: 8px;">${cleanTitle}</h4>
-                <p class="event-desc" style="font-size: 0.88rem;">${cleanDesc}</p>
-                <div class="event-footer" style="padding-top: 12px;">
-                  <a href="events.html" class="btn btn-outline btn-sm">View Details & Register →</a>
+                <h3 class="event-title-home">${cleanTitle}</h3>
+                <p class="event-desc">${cleanDesc}</p>
+                <div class="event-bottom-section">
+                  <div class="event-footer">
+                    <a href="events.html" class="btn btn-outline btn-sm">View Details & Register →</a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -346,8 +350,10 @@ async function loadLandingPageData(currentUser) {
               <div class="announcement-icon" style="width: 42px; height: 42px; font-size: 1.2rem;">📢</div>
               <div class="announcement-body">
                 <div class="announcement-header">
-                  <strong style="font-size: 1.05rem;">${cleanTitle}</strong>
-                  <span class="announcement-time">${API.formatDate(a.created_at)}</span>
+                  <div class="announcement-title-group">
+                    <h3 class="announcement-title">${cleanTitle}</h3>
+                    <span class="announcement-time">· ${API.formatDate(a.created_at)}</span>
+                  </div>
                 </div>
                 <p class="announcement-desc" style="margin-top: 6px;">${cleanDesc}</p>
               </div>
