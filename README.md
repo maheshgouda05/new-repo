@@ -1,7 +1,7 @@
 # Analytix Club Website
 
 > Complete, responsive college technical club website with role-based access control, FastAPI REST backend, and Supabase database architecture.
-
+website link-https://analytix-644w.onrender.com/
 ---
 
 ## 📁 Project Architecture & Folder Structure
